@@ -6,9 +6,9 @@ import {
   View,
   ScrollView,
 } from "react-native";
-import RenderHTML from "react-native-render-html";
 import WebView from "react-native-webview";
 import { NamuWiki } from "../backend/namuwiki";
+import { Result } from "../components/Result";
 
 export default function Main() {
   const [keyword, setKeyword] = useState("");
@@ -84,7 +84,7 @@ export default function Main() {
           <NamuWiki ref={namuWikiRef} onSuccess={handleShowResult} />
         </View>
         <View>
-          <RenderHTML contentWidth={100} source={{ html: result }} />
+          <Result html={result} />
         </View>
       </ScrollView>
     </SafeAreaView>
