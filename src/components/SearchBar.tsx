@@ -3,8 +3,10 @@ import {
   ActivityIndicator,
   Button,
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
   StyleSheet,
   TextInput,
+  TextInputKeyPressEventData,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -55,6 +57,7 @@ export function SearchBar() {
         >
           <TextInput
             value={inputKeyword}
+            onSubmitEditing={handleClickButton}
             onChangeText={setInputKeyword}
             style={styles.input}
           />
