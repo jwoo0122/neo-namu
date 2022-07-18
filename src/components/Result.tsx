@@ -1,4 +1,4 @@
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
 import { Anchor } from "../elements/Anchor";
 import { useSearchResult } from "../hooks/useSearch";
@@ -23,13 +23,15 @@ export function Result() {
   const dimension = useWindowDimensions();
 
   return (
-    <RenderHTML
-      contentWidth={dimension.width}
-      source={{ html: result }}
-      // @ts-ignore
-      domVisitors={{ onElement }}
-      ignoredDomTags={["noscript", "iframe"]}
-      renderers={{ a: Anchor }}
-    />
+    <View style={{ width: "100%", padding: 10 }}>
+      <RenderHTML
+        contentWidth={dimension.width}
+        source={{ html: result }}
+        // @ts-ignore
+        domVisitors={{ onElement }}
+        ignoredDomTags={["noscript", "iframe"]}
+        renderers={{ a: Anchor }}
+      />
+    </View>
   );
 }
