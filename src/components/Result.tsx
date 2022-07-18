@@ -28,6 +28,10 @@ export function Result() {
   return (
     <View style={{ width: "100%", paddingHorizontal: 10, paddingTop: top }}>
       <RenderHTML
+        baseStyle={{
+          fontSize: 18,
+          lineHeight: 27,
+        }}
         contentWidth={dimension.width}
         source={{ html: result }}
         // @ts-ignore
