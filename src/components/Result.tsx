@@ -2,6 +2,7 @@ import { useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Anchor } from "../elements/Anchor";
+import { Heading2 } from "../elements/Heading2";
 import { useSearchResult } from "../hooks/useSearch";
 
 function onElement(element: Element) {
@@ -37,7 +38,7 @@ export function Result() {
         // @ts-ignore
         domVisitors={{ onElement }}
         ignoredDomTags={["noscript", "iframe"]}
-        renderers={{ a: Anchor }}
+        renderers={{ a: Anchor, h2: Heading2 }}
       />
     </View>
   );
