@@ -1,12 +1,35 @@
-import { QueryClient, QueryClientProvider } from "react-query";
+import { useMemo, useState } from "react";
+import { SearchContext } from "./src/context/SearchContext";
 import Main from "./src/pages/Main";
 
-const queryClient = new QueryClient();
-
 export default function App() {
+  const [result, setResult] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSetResult = (_result: string) => {
+    setResult(_result);
+    setIsLoading(false);
+  };
+  const handleSetKeyword = (_keyword: string) => {
+    setKeyword(_keyword);
+    setIsLoading(true);
+  };
+
+  const contextValue = useMemo(
+    () => ({
+      result,
+      keyword,
+      isLoading,
+      setResult: handleSetResult,
+      setKeyword: handleSetKeyword,
+    }),
+    [result, keyword, isLoading, handleSetKeyword, handleSetResult]
+  );
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <SearchContext.Provider value={contextValue}>
       <Main />
-    </QueryClientProvider>
+    </SearchContext.Provider>
   );
 }

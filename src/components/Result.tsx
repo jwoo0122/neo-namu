@@ -1,9 +1,12 @@
 import { useWindowDimensions } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
+import { Anchor } from "../elements/Anchor";
+import { useSearchResult } from "../hooks/useSearch";
 
 function onElement(element: Element) {
   if (element.attribs["src"]) {
     const originalSrc = element.attribs["src"];
+
     if (originalSrc.startsWith("//")) {
       element.attribs["src"] = `https:${originalSrc}`;
       return;
@@ -15,20 +18,18 @@ function onElement(element: Element) {
   }
 }
 
-interface ResultProps {
-  html: string;
-}
-
-export function Result({ html }: ResultProps) {
+export function Result() {
+  const result = useSearchResult();
   const dimension = useWindowDimensions();
 
   return (
     <RenderHTML
       contentWidth={dimension.width}
-      source={{ html }}
+      source={{ html: result }}
       // @ts-ignore
       domVisitors={{ onElement }}
       ignoredDomTags={["noscript", "iframe"]}
+      renderers={{ a: Anchor }}
     />
   );
 }
