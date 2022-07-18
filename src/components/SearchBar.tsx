@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -10,12 +10,17 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useIsLoading, useKeywordHandler } from "../hooks/useSearch";
+import {
+  useIsLoading,
+  useKeywordHandler,
+  useSearchKeyword,
+} from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
 
 export function SearchBar() {
   const [inputKeyword, setInputKeyword] = useState("");
   const isLoading = useIsLoading();
+  const keyword = useSearchKeyword();
   const setKeyword = useKeywordHandler();
 
   const { bottom } = useSafeAreaInsets();
@@ -23,6 +28,10 @@ export function SearchBar() {
   const handleClickButton = () => {
     setKeyword(inputKeyword);
   };
+
+  useEffect(() => {
+    setInputKeyword(keyword);
+  }, [keyword]);
 
   return (
     <KeyboardAvoidingView
