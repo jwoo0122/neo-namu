@@ -8,7 +8,7 @@ export default function Main() {
   return (
     <View>
       <StatusBar style="auto" />
-      <ScrollView>
+      <ScrollView style={{ minHeight: "100%" }}>
         <View>
           <Result />
         </View>
