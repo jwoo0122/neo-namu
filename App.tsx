@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SearchContext } from "./src/context/SearchContext";
 import Main from "./src/pages/Main";
 
@@ -29,7 +30,9 @@ export default function App() {
 
   return (
     <SearchContext.Provider value={contextValue}>
-      <Main />
+      <SafeAreaProvider>
+        <Main />
+      </SafeAreaProvider>
     </SearchContext.Provider>
   );
 }

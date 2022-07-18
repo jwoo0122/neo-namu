@@ -1,18 +1,20 @@
-import { SafeAreaView, View, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
 import { Result } from "../components/Result";
 import { SearchBar } from "../components/SearchBar";
 
 export default function Main() {
   return (
-    <SafeAreaView>
+    <View>
+      <StatusBar style="auto" />
       <ScrollView>
-        <SearchBar />
         <View>
           <Result />
         </View>
         <NamuWiki />
       </ScrollView>
-    </SafeAreaView>
+      <SearchBar />
+    </View>
   );
 }

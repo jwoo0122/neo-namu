@@ -1,5 +1,6 @@
 import { useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Anchor } from "../elements/Anchor";
 import { useSearchResult } from "../hooks/useSearch";
 
@@ -22,8 +23,10 @@ export function Result() {
   const result = useSearchResult();
   const dimension = useWindowDimensions();
 
+  const { top } = useSafeAreaInsets();
+
   return (
-    <View style={{ width: "100%", padding: 10 }}>
+    <View style={{ width: "100%", paddingHorizontal: 10, paddingTop: top }}>
       <RenderHTML
         contentWidth={dimension.width}
         source={{ html: result }}
