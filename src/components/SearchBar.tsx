@@ -25,8 +25,6 @@ export function SearchBar() {
   const keyword = useSearchKeyword();
   const setKeyword = useKeywordHandler();
 
-  const { bottom } = useSafeAreaInsets();
-
   const handleClickButton = () => {
     setKeyword(inputKeyword);
   };
@@ -36,17 +34,12 @@ export function SearchBar() {
   }, [keyword]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={"padding"}
-      keyboardVerticalOffset={10}
+    <View
       style={{
-        position: "absolute",
-        bottom: 0,
         display: "flex",
         alignItems: "center",
         width: "100%",
         paddingHorizontal: 10,
-        marginBottom: bottom,
       }}
     >
       <View style={styles.inputWrapper}>
@@ -77,7 +70,7 @@ export function SearchBar() {
           </View>
         </LinearGradient>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

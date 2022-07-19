@@ -27,7 +27,7 @@ export function Result() {
   const { top } = useSafeAreaInsets();
 
   return (
-    <View style={{ width: "100%", paddingHorizontal: 10, paddingTop: top }}>
+    <View style={{ width: "100%", paddingHorizontal: 15, paddingTop: top }}>
       <RenderHTML
         baseStyle={{
           fontSize: 18,
