@@ -15,6 +15,7 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   const link = decodeURI(tnode.attributes["href"]);
   const isOutlink = link.startsWith("https://");
   const isInternalLink = link.startsWith("/w/");
+  const isImageLink = link.startsWith("/jump/");
 
   const handleClick = () => {
     if (isOutlink) {
@@ -28,7 +29,7 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
     }
   };
 
-  if (!isOutlink && !isInternalLink) {
+  if (!isOutlink && !isInternalLink && !isImageLink) {
     return null;
   }
 
