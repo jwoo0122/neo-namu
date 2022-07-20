@@ -21,7 +21,8 @@
     "react-native-web": "0.17.7",
     "react-native-webview": "11.18.1",
     "expo-linear-gradient": "~11.3.0",
-    "expo-dev-client": "~1.0.1"
+    "expo-dev-client": "~1.0.1",
+    "expo-updates": "~0.13.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
