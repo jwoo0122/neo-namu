@@ -1,24 +1,44 @@
-import { CustomRendererProps, TBlock } from "react-native-render-html";
+import { CustomRendererProps, TText } from "react-native-render-html";
+import { THEME_DEFAULT } from "../constants/color";
 import { useKeywordHandler } from "../hooks/useSearch";
+import { openBrowserAsync } from "expo-web-browser";
 
-interface AnchorProps extends CustomRendererProps<TBlock> {}
+interface AnchorProps extends CustomRendererProps<TText> {}
 
 export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   const setKeyword = useKeywordHandler();
 
-  const handleClick = () => {
-    try {
-      const link = decodeURI(tnode.attributes["href"]);
+  const link = decodeURI(tnode.attributes["href"]);
+  const isOutlink = link.startsWith("https://");
+  const isInternalLink = link.startsWith("/w/");
 
-      if (link.startsWith("https://")) {
-        open(link);
-      } else if (link.startsWith("/w/")) {
-        setKeyword(link.replace("/w/", ""));
-      }
-    } catch {
-      alert("No search keyword");
+  const handleClick = () => {
+    if (isOutlink) {
+      alert("hey");
+      openBrowserAsync(link);
+    } else if (isInternalLink) {
+      setKeyword(link.replace("/w/", ""));
+    } else {
+      alert("Not supported link");
     }
   };
 
-  return <TDefaultRenderer onPress={handleClick} tnode={tnode} {...props} />;
+  if (!isOutlink && !isInternalLink) {
+    return null;
+  }
+
+  return (
+    <>
+      <TDefaultRenderer
+        onPress={handleClick}
+        tnode={tnode}
+        {...props}
+        style={{
+          textDecorationLine: "none",
+          color: THEME_DEFAULT,
+          marginRight: 10,
+        }}
+      />
+    </>
+  );
 }

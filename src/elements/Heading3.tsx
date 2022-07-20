@@ -5,11 +5,10 @@ import {
   isDomText,
   TBlock,
 } from "react-native-render-html";
-import { THEME_DEFAULT } from "../constants/color";
 
-interface Heading2Props extends CustomRendererProps<TBlock> {}
+interface Heading3Props extends CustomRendererProps<TBlock> {}
 
-export function Heading2({ TDefaultRenderer, tnode, ...props }: Heading2Props) {
+export function Heading3({ TDefaultRenderer, tnode, ...props }: Heading3Props) {
   // @ts-ignore
   const title = (() => {
     const targetNode = tnode.domNode.childNodes[2];
@@ -25,21 +24,13 @@ export function Heading2({ TDefaultRenderer, tnode, ...props }: Heading2Props) {
   return (
     <View
       style={{
-        marginTop: 25,
+        marginTop: 20,
         marginBottom: 10,
       }}
     >
-      <View
-        style={{
-          width: 20,
-          height: 2,
-          backgroundColor: THEME_DEFAULT,
-          marginBottom: 10,
-        }}
-      />
       <Text
         style={{
-          fontSize: 28,
+          fontSize: 24,
           fontWeight: "bold",
         }}
       >
