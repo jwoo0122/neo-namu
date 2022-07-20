@@ -1,7 +1,11 @@
 import { CustomRendererProps, TText } from "react-native-render-html";
 import { THEME_DEFAULT } from "../constants/color";
 import { useKeywordHandler } from "../hooks/useSearch";
-import { openBrowserAsync } from "expo-web-browser";
+import {
+  openBrowserAsync,
+  WebBrowserPresentationStyle,
+} from "expo-web-browser";
+import { Entypo } from "@expo/vector-icons";
 
 interface AnchorProps extends CustomRendererProps<TText> {}
 
@@ -14,8 +18,9 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
 
   const handleClick = () => {
     if (isOutlink) {
-      alert("hey");
-      openBrowserAsync(link);
+      openBrowserAsync(link, {
+        presentationStyle: WebBrowserPresentationStyle.FULL_SCREEN,
+      });
     } else if (isInternalLink) {
       setKeyword(link.replace("/w/", ""));
     } else {
@@ -29,13 +34,14 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
 
   return (
     <>
+      {isOutlink && <Entypo name="link" size={18} color={"#5797ff"} />}
       <TDefaultRenderer
         onPress={handleClick}
         tnode={tnode}
         {...props}
         style={{
           textDecorationLine: "none",
-          color: THEME_DEFAULT,
+          color: isOutlink ? "#5797ff" : THEME_DEFAULT,
           marginRight: 10,
         }}
       />
