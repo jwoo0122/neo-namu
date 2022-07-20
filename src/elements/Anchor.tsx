@@ -1,24 +1,51 @@
-import { CustomRendererProps, TBlock } from "react-native-render-html";
+import { CustomRendererProps, TText } from "react-native-render-html";
+import { THEME_DEFAULT } from "../constants/color";
 import { useKeywordHandler } from "../hooks/useSearch";
+import {
+  openBrowserAsync,
+  WebBrowserPresentationStyle,
+} from "expo-web-browser";
+import { Entypo } from "@expo/vector-icons";
 
-interface AnchorProps extends CustomRendererProps<TBlock> {}
+interface AnchorProps extends CustomRendererProps<TText> {}
 
 export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   const setKeyword = useKeywordHandler();
 
-  const handleClick = () => {
-    try {
-      const link = decodeURI(tnode.attributes["href"]);
+  const link = decodeURI(tnode.attributes["href"]);
+  const isOutlink = link.startsWith("https://");
+  const isInternalLink = link.startsWith("/w/");
+  const isImageLink = link.startsWith("/jump/");
 
-      if (link.startsWith("https://")) {
-        open(link);
-      } else if (link.startsWith("/w/")) {
-        setKeyword(link.replace("/w/", ""));
-      }
-    } catch {
-      alert("No search keyword");
+  const handleClick = () => {
+    if (isOutlink) {
+      openBrowserAsync(link, {
+        presentationStyle: WebBrowserPresentationStyle.FULL_SCREEN,
+      });
+    } else if (isInternalLink) {
+      setKeyword(link.replace("/w/", ""));
+    } else {
+      alert("Not supported link");
     }
   };
 
-  return <TDefaultRenderer onPress={handleClick} tnode={tnode} {...props} />;
+  if (!isOutlink && !isInternalLink && !isImageLink) {
+    return null;
+  }
+
+  return (
+    <>
+      {isOutlink && <Entypo name="link" size={18} color={"#5797ff"} />}
+      <TDefaultRenderer
+        onPress={handleClick}
+        tnode={tnode}
+        {...props}
+        style={{
+          textDecorationLine: "none",
+          color: isOutlink ? "#5797ff" : THEME_DEFAULT,
+          marginRight: 10,
+        }}
+      />
+    </>
+  );
 }

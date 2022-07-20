@@ -1,7 +1,7 @@
 import { View, ScrollView, Animated, KeyboardAvoidingView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
-import { Result } from "../components/Result";
+import Result from "../components/Result";
 import { SearchBar } from "../components/SearchBar";
 import { useEffect, useRef } from "react";
 import { useIsLoading } from "../hooks/useSearch";
@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Main() {
   const scrollRef = useRef<ScrollView | null>(null);
   const isLoading = useIsLoading();
-  const { bottom } = useSafeAreaInsets();
+  const { bottom, top } = useSafeAreaInsets();
 
   const scrolling = useRef(new Animated.Value(0)).current;
   const scrollingClamped = Animated.diffClamp(scrolling, 0, 400);
@@ -29,12 +29,7 @@ export default function Main() {
 
   return (
     <View>
-      <StatusBar
-        style={"auto"}
-        animated={true}
-        hideTransitionAnimation="slide"
-        translucent={true}
-      />
+      <StatusBar style={"dark"} animated={true} translucent={true} />
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}
