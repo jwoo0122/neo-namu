@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,7 +41,7 @@ function onElement(element: Element) {
   }
 }
 
-export function Result() {
+function Result() {
   const result = useSearchResult();
   const dimension = useWindowDimensions();
 
@@ -77,3 +78,5 @@ export function Result() {
     </View>
   );
 }
+
+export default React.memo(Result);
