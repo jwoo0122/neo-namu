@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { WebView } from "react-native-webview";
+import { WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import { useResultHandler, useSearchKeyword } from "../hooks/useSearch";
 
 const NAMU_WIKI = "https://namu.wiki";
@@ -31,7 +32,7 @@ export function NamuWiki() {
 
   const namuWikiRef = useRef<WebView | null>(null);
 
-  const handleSuccess = ({ nativeEvent: { data } }) => {
+  const handleSuccess = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
     setResult(data);
   };
 
