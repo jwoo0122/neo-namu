@@ -29,22 +29,7 @@ export default function Main() {
 
   return (
     <View>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: top,
-          backgroundColor: "black",
-          zIndex: 1,
-        }}
-      ></View>
-
-      <StatusBar
-        style={"auto"}
-        animated={true}
-        hideTransitionAnimation="slide"
-        translucent={true}
-      />
+      <StatusBar style={"dark"} animated={true} translucent={true} />
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}
