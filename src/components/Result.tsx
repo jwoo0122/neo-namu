@@ -2,6 +2,7 @@ import { Text, useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Anchor } from "../elements/Anchor";
+import { BlockQuote } from "../elements/BlockQuote";
 import { Heading2 } from "../elements/Heading2";
 import { Heading3 } from "../elements/Heading3";
 import { Heading4 } from "../elements/Heading4";
@@ -70,6 +71,7 @@ export function Result() {
           h2: Heading2,
           h3: Heading3,
           h4: Heading4,
+          blockquote: BlockQuote,
         }}
       />
     </View>
