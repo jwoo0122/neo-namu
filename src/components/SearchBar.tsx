@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
-  KeyboardAvoidingView,
-  NativeSyntheticEvent,
   StyleSheet,
   TextInput,
-  TextInputKeyPressEventData,
   TouchableOpacity,
   View,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   useIsLoading,
   useKeywordHandler,

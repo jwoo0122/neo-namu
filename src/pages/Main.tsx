@@ -1,17 +1,9 @@
-import {
-  View,
-  ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  Text,
-  Animated,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, ScrollView, Animated, KeyboardAvoidingView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
 import { Result } from "../components/Result";
 import { SearchBar } from "../components/SearchBar";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useIsLoading } from "../hooks/useSearch";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
