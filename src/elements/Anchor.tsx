@@ -1,5 +1,5 @@
 import { CustomRendererProps, TText } from "react-native-render-html";
-import { THEME_DEFAULT } from "../constants/color";
+import { THEME_ORIGINAL } from "../constants/color";
 import { useKeywordHandler } from "../hooks/useSearch";
 import {
   openBrowserAsync,
@@ -42,7 +42,7 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
         {...props}
         style={{
           textDecorationLine: "none",
-          color: isOutlink ? "#5797ff" : THEME_DEFAULT,
+          color: isOutlink ? "#5797ff" : THEME_ORIGINAL,
           marginRight: 10,
         }}
       />

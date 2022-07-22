@@ -8,24 +8,9 @@ import { Heading1 } from "../elements/Heading1";
 import { Heading2 } from "../elements/Heading2";
 import { Heading3 } from "../elements/Heading3";
 import { Heading4 } from "../elements/Heading4";
+import { Image } from "../elements/Image";
+import { Table } from "../elements/Table";
 import { useSearchResult } from "../hooks/useSearch";
-
-function UnderDevelopment() {
-  return (
-    <View
-      style={{
-        width: "100%",
-        backgroundColor: "lightgrey",
-        borderRadius: 10,
-        height: 50,
-      }}
-    >
-      <Text style={{ color: "white", textAlign: "center" }}>
-        Under Development Element (table)
-      </Text>
-    </View>
-  );
-}
 
 function onElement(element: Element) {
   if (element.attribs["src"]) {
@@ -69,12 +54,13 @@ function Result() {
         ignoredDomTags={["noscript", "iframe"]}
         renderers={{
           a: Anchor,
-          table: () => <UnderDevelopment />,
+          table: Table,
           h1: Heading1,
           h2: Heading2,
           h3: Heading3,
           h4: Heading4,
           blockquote: BlockQuote,
+          img: Image,
         }}
       />
     </View>

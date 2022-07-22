@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Main() {
   const scrollRef = useRef<ScrollView | null>(null);
   const isLoading = useIsLoading();
-  const { bottom, top } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
 
   const scrolling = useRef(new Animated.Value(0)).current;
   const scrollingClamped = Animated.diffClamp(scrolling, 0, 400);

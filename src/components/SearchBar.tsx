@@ -13,6 +13,7 @@ import {
   useSearchKeyword,
 } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
+import { THEME_GRADIENT_BASE, THEME_GRADIENT_END } from "../constants/color";
 
 export function SearchBar() {
   const [inputKeyword, setInputKeyword] = useState("");
@@ -40,7 +41,7 @@ export function SearchBar() {
       <View style={styles.inputWrapper}>
         <LinearGradient
           end={{ x: 1, y: 0 }}
-          colors={["#00A495", "#13AD65"]}
+          colors={[THEME_GRADIENT_BASE, THEME_GRADIENT_END]}
           style={styles.linearGradient}
         >
           <TextInput
@@ -57,7 +58,7 @@ export function SearchBar() {
                 <FontAwesome
                   name="search"
                   size={20}
-                  color="white"
+                  color={"white"}
                   style={{ marginBottom: 2 }}
                 />
               )}
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
 
     elevation: 18,
     borderWidth: 2,
-    borderColor: "#048c7f",
+    borderColor: "#363636",
   },
   linearGradient: {
     width: "100%",
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   searchButton: {
-    backgroundColor: "#614D42",
+    backgroundColor: "transparent",
     width: 36,
     height: 36,
     borderRadius: 20,
