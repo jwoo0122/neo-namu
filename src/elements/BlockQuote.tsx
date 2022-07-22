@@ -1,22 +1,35 @@
-import { useWindowDimensions, View } from "react-native";
+import { useColorScheme, useWindowDimensions, View } from "react-native";
 import { CustomRendererProps, TText } from "react-native-render-html";
-import { THEME_EXTRA_LIGHT, THEME_LIGHT } from "../constants/color";
 import { FontAwesome } from "@expo/vector-icons";
 
 interface BlockQuoteProps extends CustomRendererProps<TText> {}
+
+export const THEME_EXTRA_LIGHT = "#daf2e9";
+export const THEME_LIGHT = "#cae8dd";
+
+export const THEME_EXTRA_LIGHT_DARK = "#2c2c2c";
+export const THEME_LIGHT_DARK = "#3c3c3c";
 
 export function BlockQuote({
   TDefaultRenderer,
   tnode,
   ...props
 }: BlockQuoteProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const { backgroundColor, color } = {
+    backgroundColor: isDark ? THEME_EXTRA_LIGHT_DARK : THEME_EXTRA_LIGHT,
+    color: isDark ? THEME_LIGHT_DARK : THEME_LIGHT,
+  };
+
   const dimension = useWindowDimensions();
 
   return (
     <View
       style={{
         width: dimension.width,
-        backgroundColor: THEME_EXTRA_LIGHT,
+        backgroundColor,
         marginLeft: -15,
         marginVertical: 15,
         paddingVertical: 10,
@@ -26,8 +39,8 @@ export function BlockQuote({
       <FontAwesome
         name="quote-left"
         size={80}
-        color={THEME_LIGHT}
-        style={{ position: "absolute", top: -10, left: 10 }}
+        color={color}
+        style={{ position: "absolute", top: -12, left: 10 }}
       />
       <TDefaultRenderer tnode={tnode} {...props} />
     </View>

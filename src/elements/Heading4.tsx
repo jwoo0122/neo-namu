@@ -5,10 +5,13 @@ import {
   isDomText,
   TBlock,
 } from "react-native-render-html";
+import { useColor } from "../hooks/useColor";
 
 interface Heading4Props extends CustomRendererProps<TBlock> {}
 
 export function Heading4({ TDefaultRenderer, tnode, ...props }: Heading4Props) {
+  const { color } = useColor();
+
   // @ts-ignore
   const title = (() => {
     const targetNode = tnode.domNode.childNodes[2];
@@ -27,6 +30,7 @@ export function Heading4({ TDefaultRenderer, tnode, ...props }: Heading4Props) {
         style={{
           fontSize: 20,
           fontWeight: "bold",
+          color,
         }}
       >
         {title}

@@ -5,10 +5,13 @@ import {
   isDomText,
   TText,
 } from "react-native-render-html";
+import { useColor } from "../hooks/useColor";
 
 interface Heading1Props extends CustomRendererProps<TText> {}
 
 export function Heading1({ TDefaultRenderer, tnode, ...props }: Heading1Props) {
+  const { color } = useColor();
+
   const title = (() => {
     const targetNode = tnode.domNode.children[0];
     if (isDomElement(targetNode)) {
@@ -40,6 +43,7 @@ export function Heading1({ TDefaultRenderer, tnode, ...props }: Heading1Props) {
         style={{
           fontSize: 40,
           fontWeight: "bold",
+          color,
         }}
       >
         {title}

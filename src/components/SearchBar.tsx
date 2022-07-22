@@ -4,21 +4,26 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import {
   useIsLoading,
   useKeywordHandler,
   useSearchKeyword,
 } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
+import { useColor } from "../hooks/useColor";
 
 export function SearchBar() {
+  const { background, color } = useColor();
   const [inputKeyword, setInputKeyword] = useState("");
   const isLoading = useIsLoading();
   const keyword = useSearchKeyword();
   const setKeyword = useKeywordHandler();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const colorForIcon = isDark ? "white" : "#3F3F3F";
 
   const handleClickButton = () => {
     setKeyword(inputKeyword);
@@ -38,32 +43,34 @@ export function SearchBar() {
       }}
     >
       <View style={styles.inputWrapper}>
-        <LinearGradient
-          end={{ x: 1, y: 0 }}
-          colors={["#00A495", "#13AD65"]}
-          style={styles.linearGradient}
-        >
+        <View style={[styles.linearGradient, { backgroundColor: background }]}>
           <TextInput
+            placeholder="나무위키에서 검색..."
             value={inputKeyword}
             onSubmitEditing={handleClickButton}
             onChangeText={setInputKeyword}
-            style={styles.input}
+            style={[styles.input, { color }]}
           />
-          <View style={styles.searchButton}>
+          <View
+            style={[
+              styles.searchButton,
+              { backgroundColor: isDark ? "#5A5A5A" : "#DFDFDF" },
+            ]}
+          >
             <TouchableOpacity onPress={handleClickButton}>
               {isLoading ? (
-                <ActivityIndicator />
+                <ActivityIndicator color={colorForIcon} />
               ) : (
                 <FontAwesome
                   name="search"
                   size={20}
-                  color="white"
+                  color={colorForIcon}
                   style={{ marginBottom: 2 }}
                 />
               )}
             </TouchableOpacity>
           </View>
-        </LinearGradient>
+        </View>
       </View>
     </View>
   );
@@ -78,14 +85,15 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 9,
+      height: 3,
     },
-    shadowOpacity: 0.48,
-    shadowRadius: 11.95,
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
 
-    elevation: 18,
-    borderWidth: 2,
-    borderColor: "#048c7f",
+    elevation: 7,
+
+    borderWidth: 3,
+    borderColor: "#0cad80",
   },
   linearGradient: {
     width: "100%",
@@ -94,7 +102,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 10,
-    paddingRight: 8,
+    paddingRight: 4,
     borderRadius: 29,
   },
   input: {
@@ -105,10 +113,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   searchButton: {
-    backgroundColor: "#614D42",
-    width: 36,
-    height: 36,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
