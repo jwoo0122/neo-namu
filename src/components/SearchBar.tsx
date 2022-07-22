@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     shadowRadius: 11.95,
 
     elevation: 18,
-    borderWidth: 2,
-    borderColor: "#363636",
+    borderWidth: 3,
+    borderColor: "#0cad80",
   },
   linearGradient: {
     width: "100%",
@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     backgroundColor: "#5A5A5A",
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
