@@ -17,7 +17,6 @@ export function Table({ TDefaultRenderer, tnode, ...props }: TableProps) {
         marginVertical: 10,
         borderRadius: 10,
         overflow: "hidden",
-        padding: 8,
       }}
     />
   );
