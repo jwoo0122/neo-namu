@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 10,
-    paddingRight: 8,
+    paddingRight: 4,
     borderRadius: 29,
   },
   input: {
@@ -106,10 +106,10 @@ const styles = StyleSheet.create({
     color: "white",
   },
   searchButton: {
-    backgroundColor: "transparent",
-    width: 36,
-    height: 36,
-    borderRadius: 20,
+    backgroundColor: "#5A5A5A",
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
