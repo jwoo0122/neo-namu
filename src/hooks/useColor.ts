@@ -5,7 +5,7 @@ export function useColor() {
   const colorScheme = useColorScheme();
 
   return {
-    background: colorScheme === "dark" ? APP_BACKGROUND_DARK : "white",
+    background: colorScheme === "dark" ? APP_BACKGROUND_DARK : "#FFFFFF",
     color: colorScheme === "dark" ? "#F0F0F0" : "black",
   };
 }

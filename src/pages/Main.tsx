@@ -4,6 +4,7 @@ import {
   Animated,
   KeyboardAvoidingView,
   useWindowDimensions,
+  useColorScheme,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
@@ -17,9 +18,12 @@ import { useColor } from "../hooks/useColor";
 export default function Main() {
   const scrollRef = useRef<ScrollView | null>(null);
   const isLoading = useIsLoading();
-  const { bottom } = useSafeAreaInsets();
+  const { bottom: safeAreaBottom, top: safeAreaHeight } = useSafeAreaInsets();
   const { height: deviceHeight } = useWindowDimensions();
   const { background } = useColor();
+  const colorScheme = useColorScheme();
+  const transparentColor =
+    colorScheme !== "dark" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
 
   const [contentHeight, setContentHeight] = useState(0);
   const scrollYMax = Math.max(contentHeight - deviceHeight, 1);
@@ -48,6 +52,18 @@ export default function Main() {
   return (
     <View style={{ backgroundColor: background }}>
       <StatusBar style={"auto"} animated={true} translucent={true} />
+      <View
+        style={{
+          backgroundColor: background,
+          zIndex: 10,
+          position: "absolute",
+          top: 0,
+          width: "100%",
+          height: safeAreaHeight,
+          borderBottomWidth: 1,
+          borderBottomColor: transparentColor,
+        }}
+      />
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}
@@ -56,7 +72,7 @@ export default function Main() {
           bottom: 0,
           zIndex: 1,
           width: "100%",
-          marginBottom: bottom,
+          marginBottom: safeAreaBottom,
         }}
       >
         <Animated.View
