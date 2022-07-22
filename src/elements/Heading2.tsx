@@ -6,10 +6,13 @@ import {
   TBlock,
 } from "react-native-render-html";
 import { THEME_ORIGINAL } from "../constants/color";
+import { useColor } from "../hooks/useColor";
 
 interface Heading2Props extends CustomRendererProps<TBlock> {}
 
 export function Heading2({ TDefaultRenderer, tnode, ...props }: Heading2Props) {
+  const { color } = useColor();
+
   // @ts-ignore
   const title = (() => {
     const targetNode = tnode.domNode.childNodes[2];
@@ -41,6 +44,7 @@ export function Heading2({ TDefaultRenderer, tnode, ...props }: Heading2Props) {
         style={{
           fontSize: 28,
           fontWeight: "bold",
+          color,
         }}
       >
         {title}

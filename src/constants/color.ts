@@ -5,3 +5,5 @@ export const THEME_EXTRA_LIGHT = "#daf2e9";
 export const THEME_LIGHT = "#cae8dd";
 
 export const THEME_ORIGINAL = "#00A495";
+
+export const APP_BACKGROUND_DARK = "#222222";

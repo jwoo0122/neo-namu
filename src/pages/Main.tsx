@@ -12,12 +12,14 @@ import { SearchBar } from "../components/SearchBar";
 import { useEffect, useRef, useState } from "react";
 import { useIsLoading } from "../hooks/useSearch";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColor } from "../hooks/useColor";
 
 export default function Main() {
   const scrollRef = useRef<ScrollView | null>(null);
   const isLoading = useIsLoading();
   const { bottom } = useSafeAreaInsets();
   const { height: deviceHeight } = useWindowDimensions();
+  const { background } = useColor();
 
   const [contentHeight, setContentHeight] = useState(0);
   const scrollYMax = Math.max(contentHeight - deviceHeight, 1);
@@ -44,8 +46,8 @@ export default function Main() {
   }, [isLoading]);
 
   return (
-    <View>
-      <StatusBar style={"dark"} animated={true} translucent={true} />
+    <View style={{ backgroundColor: background }}>
+      <StatusBar style={"auto"} animated={true} translucent={true} />
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}

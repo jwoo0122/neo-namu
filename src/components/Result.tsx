@@ -11,6 +11,7 @@ import { Heading4 } from "../elements/Heading4";
 import { Image } from "../elements/Image";
 import { Table } from "../elements/Table";
 import { Td } from "../elements/Td";
+import { useColor } from "../hooks/useColor";
 import { useSearchResult } from "../hooks/useSearch";
 
 function onElement(element: Element) {
@@ -43,6 +44,7 @@ const renderers = {
 function Result() {
   const result = useSearchResult();
   const dimension = useWindowDimensions();
+  const { background, color } = useColor();
 
   const { top, bottom } = useSafeAreaInsets();
 
@@ -53,15 +55,17 @@ function Result() {
         paddingHorizontal: 15,
         paddingTop: top,
         paddingBottom: bottom + 50,
+        backgroundColor: background,
       }}
     >
       <RenderHTML
         baseStyle={{
           fontSize: 18,
           lineHeight: 27,
+          color,
         }}
         contentWidth={dimension.width}
-        source={{ html: result }}
+        source={{ html: result || `<div>hi!</div>` }}
         // @ts-ignore
         domVisitors={{ onElement }}
         ignoredDomTags={["noscript", "iframe"]}
