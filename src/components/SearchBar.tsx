@@ -18,6 +18,8 @@ import React, {
   useState,
 } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { LinearGradient } from "expo-linear-gradient";
+import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -73,85 +75,88 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
   }));
 
   return (
-    <View
-      style={{
-        display: "flex",
-        alignItems: "center",
-        width: "100%",
-        paddingHorizontal: 10,
-      }}
-    >
-      <View style={styles.inputWrapper}>
-        <View style={[styles.linearGradient, { backgroundColor: background }]}>
-          {isFocused && suggestion && suggestion.length !== 0 && (
-            <View style={[styles.suggestions, { backgroundColor: background }]}>
-              {suggestion.map((_keyword) => (
-                <TouchableOpacity
-                  key={_keyword}
-                  onPress={() => {
-                    handleBlur();
-                    setKeyword(_keyword);
-                    setIsLoading(true);
-                  }}
-                >
-                  <View style={styles.suggestionItem}>
-                    <Text style={{ color, fontSize: 17 }}>{_keyword}</Text>
-                    <Feather
-                      name="arrow-up-right"
-                      size={20}
-                      color={colorForButtons}
-                    />
-                  </View>
-                </TouchableOpacity>
-              )) || null}
-              <View
-                style={{
-                  width: "100%",
-                  height: 2,
-                  backgroundColor: transparent,
-                }}
-              />
-            </View>
-          )}
-
+    <View style={styles.positioner}>
+      <View style={styles.wrapper}>
+        <LinearGradient
+          end={{ x: 0.5, y: 1 }}
+          colors={[THEME_ORIGINAL, THEME_LIGHT]}
+          style={styles.linearGradient}
+        >
           <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+            style={[styles.searchBarWrapper, { backgroundColor: background }]}
           >
-            <TextInput
-              ref={inputRef}
-              placeholder="나무위키에서 검색..."
-              value={localKeyword}
-              onSubmitEditing={handleClickButton}
-              onChangeText={setLocalKeyword}
-              style={[styles.input, { color }]}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            />
+            {isFocused && suggestion && suggestion.length !== 0 && (
+              <View
+                style={[styles.suggestions, { backgroundColor: background }]}
+              >
+                {suggestion.map((_keyword) => (
+                  <TouchableOpacity
+                    key={_keyword}
+                    onPress={() => {
+                      handleBlur();
+                      setKeyword(_keyword);
+                      setIsLoading(true);
+                    }}
+                  >
+                    <View style={styles.suggestionItem}>
+                      <Text style={{ color, fontSize: 17 }}>{_keyword}</Text>
+                      <Feather
+                        name="arrow-up-right"
+                        size={20}
+                        color={colorForButtons}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )) || null}
+                <View
+                  style={{
+                    width: "100%",
+                    height: 2,
+                    backgroundColor: transparent,
+                  }}
+                />
+              </View>
+            )}
+
             <View
-              style={[
-                styles.searchButton,
-                { backgroundColor: colorForButtons },
-              ]}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
             >
-              <TouchableOpacity onPress={handleClickButton}>
-                {isLoading ? (
-                  <ActivityIndicator color={colorForIcon} />
-                ) : (
-                  <FontAwesome
-                    name="search"
-                    size={20}
-                    color={colorForIcon}
-                    style={{ marginBottom: 2 }}
-                  />
-                )}
-              </TouchableOpacity>
+              <TextInput
+                ref={inputRef}
+                placeholder="나무위키에서 검색..."
+                value={localKeyword}
+                onSubmitEditing={handleClickButton}
+                onChangeText={setLocalKeyword}
+                style={[styles.input, { color }]}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+              <View
+                style={[
+                  styles.searchButton,
+                  { backgroundColor: colorForButtons },
+                ]}
+              >
+                <TouchableOpacity onPress={handleClickButton}>
+                  {isLoading ? (
+                    <ActivityIndicator color={colorForIcon} />
+                  ) : (
+                    <FontAwesome
+                      name="search"
+                      size={20}
+                      color={colorForIcon}
+                      style={{ marginBottom: 2 }}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </LinearGradient>
       </View>
     </View>
   );
@@ -159,13 +164,22 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
 
 export default forwardRef(SearchBar);
 
-const styles = StyleSheet.create({
-  inputWrapper: {
-    width: "100%",
-  },
-  linearGradient: {
-    borderRadius: 29,
+const BASE_BORDER_RADIUS = 30;
 
+const styles = StyleSheet.create({
+  positioner: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  wrapper: {
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    borderRadius: BASE_BORDER_RADIUS,
+
+    /* Shadow */
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -173,14 +187,15 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.29,
     shadowRadius: 4.65,
-
     elevation: 7,
-
-    borderWidth: 3,
-    borderColor: "#0cad80",
+  },
+  linearGradient: {
     width: "100%",
-    position: "absolute",
-    bottom: 0,
+    padding: 3,
+    borderRadius: BASE_BORDER_RADIUS,
+  },
+  searchBarWrapper: {
+    borderRadius: 27,
   },
   suggestions: {
     paddingTop: 18,

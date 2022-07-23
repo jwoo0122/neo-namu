@@ -4,11 +4,11 @@ import { FontAwesome } from "@expo/vector-icons";
 
 interface BlockQuoteProps extends CustomRendererProps<TText> {}
 
-export const THEME_EXTRA_LIGHT = "#daf2e9";
-export const THEME_LIGHT = "#cae8dd";
+const THEME_EXTRA_LIGHT = "#daf2e9";
+const THEME_LIGHT = "#cae8dd";
 
-export const THEME_EXTRA_LIGHT_DARK = "#2c2c2c";
-export const THEME_LIGHT_DARK = "#3c3c3c";
+const THEME_EXTRA_LIGHT_DARK = "#2c2c2c";
+const THEME_LIGHT_DARK = "#3c3c3c";
 
 export function BlockQuote({
   TDefaultRenderer,
