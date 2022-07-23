@@ -16,8 +16,11 @@ import {
 } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
+import { useState } from "react";
 
 export function SearchBar() {
+  const [isFocused, setIsFocused] = useState(false);
+
   const { background, color } = useColor();
   const isLoading = useIsLoading();
   const colorScheme = useColorScheme();
@@ -34,6 +37,10 @@ export function SearchBar() {
     start();
   };
 
+  const handleBlur = () => setIsFocused(false);
+
+  const handleFocus = () => setIsFocused(true);
+
   return (
     <View
       style={{
@@ -45,24 +52,31 @@ export function SearchBar() {
     >
       <View style={styles.inputWrapper}>
         <View style={[styles.linearGradient, { backgroundColor: background }]}>
-          <View style={[styles.suggestions, { backgroundColor: background }]}>
-            {suggestion?.reverse().map((_keyword) => (
-              <TouchableOpacity
-                key={_keyword}
-                onPress={() => {
-                  setKeyword(_keyword);
-                  start();
+          {isFocused && (
+            <View style={[styles.suggestions, { backgroundColor: background }]}>
+              {suggestion?.reverse().map((_keyword) => (
+                <TouchableOpacity
+                  key={_keyword}
+                  onPress={() => {
+                    handleBlur();
+                    setKeyword(_keyword);
+                    start();
+                  }}
+                >
+                  <View style={{ width: "100%", marginBottom: 10 }}>
+                    <Text style={{ color }}>{_keyword}</Text>
+                  </View>
+                </TouchableOpacity>
+              )) || null}
+              <View
+                style={{
+                  width: "100%",
+                  height: 2,
+                  backgroundColor: transparent,
                 }}
-              >
-                <View style={{ width: "100%", marginBottom: 10 }}>
-                  <Text style={{ color }}>{_keyword}</Text>
-                </View>
-              </TouchableOpacity>
-            )) || null}
-            <View
-              style={{ width: "100%", height: 2, backgroundColor: transparent }}
-            />
-          </View>
+              />
+            </View>
+          )}
 
           <View
             style={{
@@ -77,6 +91,8 @@ export function SearchBar() {
               onSubmitEditing={handleClickButton}
               onChangeText={setKeyword}
               style={[styles.input, { color }]}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
             <View
               style={[
