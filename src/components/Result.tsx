@@ -1,5 +1,5 @@
 import React from "react";
-import { useWindowDimensions, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import RenderHTML, { Element } from "react-native-render-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Anchor } from "../elements/Anchor";
@@ -12,7 +12,7 @@ import { Image } from "../elements/Image";
 import { Table } from "../elements/Table";
 import { Td } from "../elements/Td";
 import { useColor } from "../hooks/useColor";
-import { useSearchResult } from "../hooks/useSearch";
+import { useResult } from "../hooks/useSearch";
 
 function onElement(element: Element) {
   if (element.attribs["src"]) {
@@ -39,10 +39,15 @@ const renderers = {
   blockquote: BlockQuote,
   td: Td,
   img: Image,
+  video: () => (
+    <View>
+      <Text>Video is underdevelopment</Text>
+    </View>
+  ),
 };
 
 function Result() {
-  const result = useSearchResult();
+  const [result] = useResult();
   const dimension = useWindowDimensions();
   const { background, color } = useColor();
 

@@ -9,16 +9,15 @@ import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
 import Result from "../components/Result";
 import SearchBar, { SearchBarHandler } from "../components/SearchBar";
-import { useEffect, useRef, useState } from "react";
-import { useIsLoading } from "../hooks/useSearch";
+import React, { useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColor } from "../hooks/useColor";
+import { useDebouncedCallback } from "use-debounce";
 
-export default function Main() {
+function Main() {
   const searchBarRef = useRef<SearchBarHandler | null>(null);
 
   const scrollRef = useRef<ScrollView | null>(null);
-  const isLoading = useIsLoading();
   const { bottom: safeAreaBottom, top: safeAreaHeight } = useSafeAreaInsets();
   const { height: deviceHeight } = useWindowDimensions();
   const { background, transparent } = useColor();
@@ -33,6 +32,7 @@ export default function Main() {
     outputRange: [0, scrollYMax],
     extrapolate: "clamp",
   });
+
   const scrollingClamped = Animated.diffClamp(clampedScrollY, 0, 400);
 
   const translation = scrollingClamped.interpolate({
@@ -41,11 +41,10 @@ export default function Main() {
     extrapolate: "clamp",
   });
 
-  useEffect(() => {
-    if (!isLoading) {
-      scrollRef.current?.scrollTo({ x: 0 });
-    }
-  }, [isLoading]);
+  const handleHeightChange = useDebouncedCallback((_, _height: number) => {
+    scrollRef.current.scrollTo({ y: 0 });
+    setContentHeight(_height);
+  });
 
   return (
     <View style={{ backgroundColor: background }}>
@@ -111,12 +110,12 @@ export default function Main() {
           ],
           { useNativeDriver: true }
         )}
-        onContentSizeChange={(_, _height) => {
-          setContentHeight(_height);
-        }}
+        onContentSizeChange={handleHeightChange}
       >
         <Result />
       </Animated.ScrollView>
     </View>
   );
 }
+
+export default React.memo(Main);

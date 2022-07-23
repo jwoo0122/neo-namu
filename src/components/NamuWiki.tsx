@@ -3,9 +3,9 @@ import { WebView } from "react-native-webview";
 import { WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import {
   useIsLoading,
-  useResultHandler,
-  useSearchKeyword,
-  useSuggestionHandler,
+  useKeyword,
+  useResult,
+  useSuggestion,
 } from "../hooks/useSearch";
 
 const NAMU_WIKI = "https://namu.wiki";
@@ -51,15 +51,16 @@ const NEO_NAMU_BRIDGE = `
 `;
 
 export function NamuWiki() {
-  const keyword = useSearchKeyword();
-  const isLoading = useIsLoading();
-  const setResult = useResultHandler();
-  const setSuggestion = useSuggestionHandler();
+  const [keyword] = useKeyword();
+  const [isLoading, setIsLoading] = useIsLoading();
+  const [, setResult] = useResult();
+  const [, setSuggestion] = useSuggestion();
 
   const namuWikiRef = useRef<WebView | null>(null);
 
   const handleMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
     if (data.startsWith("html-result")) {
+      setIsLoading(false);
       setResult(data.replace(/^html-result:/g, ""));
     } else if (data.startsWith("suggestion-result")) {
       setSuggestion(data.replace(/^suggestion-result/g, "").split(","));

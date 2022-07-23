@@ -7,13 +7,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import {
-  useIsLoading,
-  useKeywordHandler,
-  useSearchKeyword,
-  useStartSeatching,
-  useSuggestion,
-} from "../hooks/useSearch";
+import { useIsLoading, useKeyword, useSuggestion } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 import React, {
@@ -32,24 +26,26 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
   const inputRef = useRef<TextInput | null>(null);
 
   const { background, color } = useColor();
-  const isLoading = useIsLoading();
+  const [isLoading] = useIsLoading();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
   const { transparent } = useColor();
 
-  const keyword = useSearchKeyword();
-  const setKeyword = useKeywordHandler();
-  const start = useStartSeatching();
-  const suggestion = useSuggestion();
+  const [keyword, setKeyword] = useKeyword();
+  const [suggestion] = useSuggestion();
+  const [, setIsLoading] = useIsLoading();
 
   const handleClickButton = () => {
-    start();
+    setIsLoading(true);
   };
 
   const handleBlur = () => setIsFocused(false);
 
-  const handleFocus = () => setIsFocused(true);
+  const handleFocus = () => {
+    setKeyword(keyword);
+    setIsFocused(true);
+  };
 
   useImperativeHandle(ref, () => ({
     blur: () => inputRef.current?.blur(),
@@ -74,7 +70,7 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
                   onPress={() => {
                     handleBlur();
                     setKeyword(_keyword);
-                    start();
+                    setIsLoading(true);
                   }}
                 >
                   <View style={{ width: "100%", marginBottom: 10 }}>
