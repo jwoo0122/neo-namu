@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   useColorScheme,
@@ -11,27 +11,28 @@ import {
   useIsLoading,
   useKeywordHandler,
   useSearchKeyword,
+  useStartSeatching,
+  useSuggestion,
 } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 
 export function SearchBar() {
   const { background, color } = useColor();
-  const [inputKeyword, setInputKeyword] = useState("");
   const isLoading = useIsLoading();
-  const keyword = useSearchKeyword();
-  const setKeyword = useKeywordHandler();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
+  const { transparent } = useColor();
+
+  const keyword = useSearchKeyword();
+  const setKeyword = useKeywordHandler();
+  const start = useStartSeatching();
+  const suggestion = useSuggestion();
 
   const handleClickButton = () => {
-    setKeyword(inputKeyword);
+    start();
   };
-
-  useEffect(() => {
-    setInputKeyword(keyword);
-  }, [keyword]);
 
   return (
     <View
@@ -44,31 +45,58 @@ export function SearchBar() {
     >
       <View style={styles.inputWrapper}>
         <View style={[styles.linearGradient, { backgroundColor: background }]}>
-          <TextInput
-            placeholder="나무위키에서 검색..."
-            value={inputKeyword}
-            onSubmitEditing={handleClickButton}
-            onChangeText={setInputKeyword}
-            style={[styles.input, { color }]}
-          />
+          <View style={[styles.suggestions, { backgroundColor: background }]}>
+            {suggestion?.reverse().map((_keyword) => (
+              <TouchableOpacity
+                key={_keyword}
+                onPress={() => {
+                  setKeyword(_keyword);
+                  start();
+                }}
+              >
+                <View style={{ width: "100%", marginBottom: 10 }}>
+                  <Text style={{ color }}>{_keyword}</Text>
+                </View>
+              </TouchableOpacity>
+            )) || null}
+            <View
+              style={{ width: "100%", height: 2, backgroundColor: transparent }}
+            />
+          </View>
+
           <View
-            style={[
-              styles.searchButton,
-              { backgroundColor: isDark ? "#5A5A5A" : "#DFDFDF" },
-            ]}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
           >
-            <TouchableOpacity onPress={handleClickButton}>
-              {isLoading ? (
-                <ActivityIndicator color={colorForIcon} />
-              ) : (
-                <FontAwesome
-                  name="search"
-                  size={20}
-                  color={colorForIcon}
-                  style={{ marginBottom: 2 }}
-                />
-              )}
-            </TouchableOpacity>
+            <TextInput
+              placeholder="나무위키에서 검색..."
+              value={keyword}
+              onSubmitEditing={handleClickButton}
+              onChangeText={setKeyword}
+              style={[styles.input, { color }]}
+            />
+            <View
+              style={[
+                styles.searchButton,
+                { backgroundColor: isDark ? "#5A5A5A" : "#DFDFDF" },
+              ]}
+            >
+              <TouchableOpacity onPress={handleClickButton}>
+                {isLoading ? (
+                  <ActivityIndicator color={colorForIcon} />
+                ) : (
+                  <FontAwesome
+                    name="search"
+                    size={20}
+                    color={colorForIcon}
+                    style={{ marginBottom: 2 }}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -79,7 +107,8 @@ export function SearchBar() {
 const styles = StyleSheet.create({
   inputWrapper: {
     width: "100%",
-    height: 58,
+  },
+  linearGradient: {
     borderRadius: 29,
 
     shadowColor: "#000",
@@ -94,30 +123,32 @@ const styles = StyleSheet.create({
 
     borderWidth: 3,
     borderColor: "#0cad80",
-  },
-  linearGradient: {
     width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 10,
-    paddingRight: 4,
-    borderRadius: 29,
+    position: "absolute",
+    bottom: 0,
+  },
+  suggestions: {
+    paddingTop: 15,
+    paddingHorizontal: 15,
+    borderTopLeftRadius: 29,
+    borderTopRightRadius: 29,
+    backgroundColor: "red",
   },
   input: {
     flex: 1,
     fontSize: 17,
     height: 40,
     paddingHorizontal: 10,
+    marginLeft: 10,
     color: "white",
   },
   searchButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    margin: 8,
   },
 });

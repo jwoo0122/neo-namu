@@ -24,3 +24,15 @@ export function useKeywordHandler() {
 export function useResultHandler() {
   return useSearchState().setResult;
 }
+
+export function useStartSeatching() {
+  return useSearchState().start;
+}
+
+export function useSuggestion() {
+  return useSearchState().suggestion;
+}
+
+export function useSuggestionHandler() {
+  return useSearchState().setSuggestion;
+}

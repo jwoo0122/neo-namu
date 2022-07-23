@@ -4,7 +4,6 @@ import {
   Animated,
   KeyboardAvoidingView,
   useWindowDimensions,
-  useColorScheme,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
@@ -20,10 +19,7 @@ export default function Main() {
   const isLoading = useIsLoading();
   const { bottom: safeAreaBottom, top: safeAreaHeight } = useSafeAreaInsets();
   const { height: deviceHeight } = useWindowDimensions();
-  const { background } = useColor();
-  const colorScheme = useColorScheme();
-  const transparentColor =
-    colorScheme !== "dark" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
+  const { background, transparent } = useColor();
 
   const [contentHeight, setContentHeight] = useState(0);
   const scrollYMax = Math.max(contentHeight - deviceHeight, 1);
@@ -61,9 +57,16 @@ export default function Main() {
           width: "100%",
           height: safeAreaHeight,
           borderBottomWidth: 1,
-          borderBottomColor: transparentColor,
+          borderBottomColor: transparent,
         }}
       />
+
+      <View
+        style={{ width: "100%", height: 0, position: "absolute", zIndex: 10 }}
+      >
+        <NamuWiki />
+      </View>
+
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}
@@ -110,7 +113,6 @@ export default function Main() {
         }}
       >
         <Result />
-        <NamuWiki />
       </Animated.ScrollView>
     </View>
   );

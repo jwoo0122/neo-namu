@@ -7,6 +7,7 @@ export default function App() {
   const [result, setResult] = useState("");
   const [keyword, setKeyword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestion, setSuggestion] = useState<string[]>([]);
 
   const handleSetResult = (_result: string) => {
     setResult(_result);
@@ -14,6 +15,8 @@ export default function App() {
   };
   const handleSetKeyword = (_keyword: string) => {
     setKeyword(_keyword);
+  };
+  const start = () => {
     setIsLoading(true);
   };
 
@@ -22,10 +25,21 @@ export default function App() {
       result,
       keyword,
       isLoading,
+      suggestion,
       setResult: handleSetResult,
       setKeyword: handleSetKeyword,
+      setSuggestion,
+      start,
     }),
-    [result, keyword, isLoading, handleSetKeyword, handleSetResult]
+    [
+      result,
+      keyword,
+      isLoading,
+      handleSetKeyword,
+      handleSetResult,
+      setSuggestion,
+      start,
+    ]
   );
 
   return (
