@@ -20,7 +20,7 @@ const NEO_NAMU_BRIDGE = `
       
       const suggestionObserver = new MutationObserver(() => {
         const suggestions = Array.from(inputEl.parentNode.children[1].children).map(_div => _div.children[0].innerHTML)
-        RN.postMessage('{ "type": "suggestion", "value": "' + suggestions +  '" }');
+        RN.postMessage('suggestion-result:' + suggestions);
       })
       
       suggestionObserver.observe(inputEl.parentNode, { childList: true, subtree: true, characterData: true })
@@ -42,8 +42,8 @@ const NEO_NAMU_BRIDGE = `
       }
 
       if (type === 'neo-namu-done') {
-        const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML.replaceAll('"', "'")
-        RN.postMessage('{ "type": "done", "value": "' + resultValue + '" }');
+        const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
+        RN.postMessage('html-result:' + resultValue);
       };
     });
   };
@@ -59,12 +59,10 @@ export function NamuWiki() {
   const namuWikiRef = useRef<WebView | null>(null);
 
   const handleMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
-    const parsedData: { type: string; value: any } = JSON.parse(data);
-
-    if (parsedData.type === "done") {
-      setResult(parsedData.value);
-    } else if (parsedData.type === "suggestion") {
-      setSuggestion(parsedData.value.split(","));
+    if (data.startsWith("html-result")) {
+      setResult(data.replace(/^html-result:/g, ""));
+    } else if (data.startsWith("suggestion-result")) {
+      setSuggestion(data.replace(/^suggestion-result/g, "").split(","));
     }
   };
 

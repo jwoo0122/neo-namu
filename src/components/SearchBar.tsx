@@ -66,9 +66,9 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
     >
       <View style={styles.inputWrapper}>
         <View style={[styles.linearGradient, { backgroundColor: background }]}>
-          {isFocused && (
+          {isFocused && suggestion && suggestion.length !== 0 && (
             <View style={[styles.suggestions, { backgroundColor: background }]}>
-              {suggestion?.reverse().map((_keyword) => (
+              {suggestion.reverse().map((_keyword) => (
                 <TouchableOpacity
                   key={_keyword}
                   onPress={() => {
