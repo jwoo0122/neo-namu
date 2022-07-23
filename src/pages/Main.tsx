@@ -4,26 +4,23 @@ import {
   Animated,
   KeyboardAvoidingView,
   useWindowDimensions,
-  useColorScheme,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
 import Result from "../components/Result";
-import { SearchBar } from "../components/SearchBar";
-import { useEffect, useRef, useState } from "react";
-import { useIsLoading } from "../hooks/useSearch";
+import SearchBar, { SearchBarHandler } from "../components/SearchBar";
+import React, { useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColor } from "../hooks/useColor";
+import { useDebouncedCallback } from "use-debounce";
 
-export default function Main() {
+function Main() {
+  const searchBarRef = useRef<SearchBarHandler | null>(null);
+
   const scrollRef = useRef<ScrollView | null>(null);
-  const isLoading = useIsLoading();
   const { bottom: safeAreaBottom, top: safeAreaHeight } = useSafeAreaInsets();
   const { height: deviceHeight } = useWindowDimensions();
-  const { background } = useColor();
-  const colorScheme = useColorScheme();
-  const transparentColor =
-    colorScheme !== "dark" ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
+  const { background, transparent } = useColor();
 
   const [contentHeight, setContentHeight] = useState(0);
   const scrollYMax = Math.max(contentHeight - deviceHeight, 1);
@@ -35,6 +32,7 @@ export default function Main() {
     outputRange: [0, scrollYMax],
     extrapolate: "clamp",
   });
+
   const scrollingClamped = Animated.diffClamp(clampedScrollY, 0, 400);
 
   const translation = scrollingClamped.interpolate({
@@ -43,11 +41,10 @@ export default function Main() {
     extrapolate: "clamp",
   });
 
-  useEffect(() => {
-    if (!isLoading) {
-      scrollRef.current?.scrollTo({ x: 0 });
-    }
-  }, [isLoading]);
+  const handleHeightChange = useDebouncedCallback((_, _height: number) => {
+    scrollRef.current.scrollTo({ y: 0 });
+    setContentHeight(_height);
+  });
 
   return (
     <View style={{ backgroundColor: background }}>
@@ -61,9 +58,16 @@ export default function Main() {
           width: "100%",
           height: safeAreaHeight,
           borderBottomWidth: 1,
-          borderBottomColor: transparentColor,
+          borderBottomColor: transparent,
         }}
       />
+
+      <View
+        style={{ width: "100%", height: 0, position: "absolute", zIndex: 10 }}
+      >
+        <NamuWiki />
+      </View>
+
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={10}
@@ -85,7 +89,7 @@ export default function Main() {
             ],
           }}
         >
-          <SearchBar />
+          <SearchBar ref={searchBarRef} />
         </Animated.View>
       </KeyboardAvoidingView>
 
@@ -93,6 +97,7 @@ export default function Main() {
         style={{ minHeight: "100%" }}
         ref={scrollRef}
         scrollEventThrottle={16}
+        onScrollBeginDrag={() => searchBarRef.current?.blur()}
         onScroll={Animated.event(
           [
             {
@@ -105,13 +110,12 @@ export default function Main() {
           ],
           { useNativeDriver: true }
         )}
-        onContentSizeChange={(_, _height) => {
-          setContentHeight(_height);
-        }}
+        onContentSizeChange={handleHeightChange}
       >
         <Result />
-        <NamuWiki />
       </Animated.ScrollView>
     </View>
   );
 }
+
+export default React.memo(Main);

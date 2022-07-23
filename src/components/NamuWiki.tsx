@@ -1,25 +1,52 @@
 import { useEffect, useRef } from "react";
 import { WebView } from "react-native-webview";
 import { WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
-import { useResultHandler, useSearchKeyword } from "../hooks/useSearch";
+import {
+  useIsLoading,
+  useKeyword,
+  useResult,
+  useSuggestion,
+} from "../hooks/useSearch";
 
 const NAMU_WIKI = "https://namu.wiki";
 
 const NEO_NAMU_BRIDGE = `
 (() => {
   if (window.ReactNativeWebView) {
+    const RN = window.ReactNativeWebView
+    
+    window.addEventListener("load", () => {
+      const inputEl = document.getElementsByTagName("input")[0];
+      
+      const suggestionObserver = new MutationObserver(() => {
+        const suggestionNode = inputEl.parentNode.children[1]
+        if (suggestionNode) {
+          const suggestions = Array.from(suggestionNode.children).map(_div => _div.children[0].innerHTML)
+          RN.postMessage('suggestion-result:' + suggestions);
+        }
+      })
+      
+      suggestionObserver.observe(inputEl.parentNode, { childList: true, subtree: true, characterData: true })
+    })
+
+    
     window.addEventListener("message", (event) => {
-      if (event.data && event.data.includes('neo-namu-search')) {
-        const { keyword } = JSON.parse(event.data);
-        const inputEl = document.getElementsByTagName("input")[0];
+      const { keyword, type } = JSON.parse(event.data);
+      const inputEl = document.getElementsByTagName("input")[0];
+      const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
+      
+      if (type === 'neo-namu-type') {
         inputEl.value = keyword;
         inputEl.dispatchEvent(new Event('input'));
-        const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
+      }
+      
+      if (type === 'neo-namu-search') {
         searchButtonEl.dispatchEvent(new Event('click'));
       }
 
-      if (event.data && event.data.includes('neo-namu-done')) {
-        window.ReactNativeWebView.postMessage(document.getElementsByTagName('article')[0].innerHTML);
+      if (type === 'neo-namu-done') {
+        const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
+        RN.postMessage('html-result:' + resultValue);
       };
     });
   };
@@ -27,30 +54,49 @@ const NEO_NAMU_BRIDGE = `
 `;
 
 export function NamuWiki() {
-  const keyword = useSearchKeyword();
-  const setResult = useResultHandler();
+  const [keyword] = useKeyword();
+  const [isLoading, setIsLoading] = useIsLoading();
+  const [, setResult] = useResult();
+  const [, setSuggestion] = useSuggestion();
 
   const namuWikiRef = useRef<WebView | null>(null);
 
-  const handleSuccess = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
-    setResult(data);
+  const handleMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
+    if (data.startsWith("html-result")) {
+      setIsLoading(false);
+      setResult(data.replace(/^html-result:/g, ""));
+    } else if (data.startsWith("suggestion-result")) {
+      setSuggestion(
+        data
+          .replace(/^suggestion-result:/g, "")
+          .split(",")
+          .slice(0, 5)
+          .reverse()
+      );
+    }
   };
 
   const handleLoadDone = () =>
-    namuWikiRef.current.postMessage(`{ "from": "neo-namu-done" }`);
+    namuWikiRef.current.postMessage(`{ "type": "neo-namu-done" }`);
 
   useEffect(() => {
     namuWikiRef.current?.postMessage(
-      `{ "from": "neo-namu-search", "keyword": "${keyword}" }`
+      `{ "type": "neo-namu-type", "keyword": "${keyword}" }`
     );
   }, [keyword]);
+
+  useEffect(() => {
+    if (isLoading) {
+      namuWikiRef.current?.postMessage(`{ "type": "neo-namu-search" }`);
+    }
+  }, [isLoading]);
 
   return (
     <WebView
       ref={namuWikiRef}
       source={{ uri: NAMU_WIKI }}
       style={{ width: "100%" }}
-      onMessage={handleSuccess}
+      onMessage={handleMessage}
       onLoad={handleLoadDone}
       injectedJavaScript={NEO_NAMU_BRIDGE}
     />

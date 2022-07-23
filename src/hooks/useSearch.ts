@@ -1,26 +1,22 @@
-import { useContext } from "react";
-import { SearchContext } from "../context/SearchContext";
+import { atom, useAtom } from "jotai";
 
-function useSearchState() {
-  return useContext(SearchContext);
+const keywordAtom = atom("");
+const resultAtom = atom("");
+const isLoadingAtom = atom(false);
+const suggestionAtom = atom<string[]>([]);
+
+export function useKeyword() {
+  return useAtom(keywordAtom);
 }
 
-export function useSearchResult() {
-  return useSearchState().result;
+export function useResult() {
+  return useAtom(resultAtom);
 }
 
 export function useIsLoading() {
-  return useSearchState().isLoading;
+  return useAtom(isLoadingAtom);
 }
 
-export function useSearchKeyword() {
-  return useSearchState().keyword;
-}
-
-export function useKeywordHandler() {
-  return useSearchState().setKeyword;
-}
-
-export function useResultHandler() {
-  return useSearchState().setResult;
+export function useSuggestion() {
+  return useAtom(suggestionAtom);
 }
