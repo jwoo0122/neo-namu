@@ -19,7 +19,7 @@ const NEO_NAMU_BRIDGE = `
       }
 
       if (event.data && event.data.includes('neo-namu-done')) {
-        window.ReactNativeWebView.postMessage(document.getElementsByTagName('article')[0].innerHTML);
+        window.ReactNativeWebView.postMessage(document.getElementsByTagName('h1')[0].parentNode.innerHTML);
       };
     });
   };
