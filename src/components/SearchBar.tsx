@@ -95,7 +95,7 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
                   }}
                 >
                   <View style={styles.suggestionItem}>
-                    <Text style={{ color, fontSize: 18 }}>{_keyword}</Text>
+                    <Text style={{ color, fontSize: 17 }}>{_keyword}</Text>
                     <Feather
                       name="arrow-up-right"
                       size={20}
@@ -183,8 +183,8 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   suggestions: {
-    paddingTop: 15,
-    paddingHorizontal: 15,
+    paddingTop: 18,
+    paddingHorizontal: 20,
     borderTopLeftRadius: 29,
     borderTopRightRadius: 29,
     backgroundColor: "red",
@@ -206,12 +206,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   searchButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    margin: 8,
+    margin: 10,
   },
 });
