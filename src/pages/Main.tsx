@@ -8,13 +8,15 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { NamuWiki } from "../components/NamuWiki";
 import Result from "../components/Result";
-import { SearchBar } from "../components/SearchBar";
+import SearchBar, { SearchBarHandler } from "../components/SearchBar";
 import { useEffect, useRef, useState } from "react";
 import { useIsLoading } from "../hooks/useSearch";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColor } from "../hooks/useColor";
 
 export default function Main() {
+  const searchBarRef = useRef<SearchBarHandler | null>(null);
+
   const scrollRef = useRef<ScrollView | null>(null);
   const isLoading = useIsLoading();
   const { bottom: safeAreaBottom, top: safeAreaHeight } = useSafeAreaInsets();
@@ -88,7 +90,7 @@ export default function Main() {
             ],
           }}
         >
-          <SearchBar />
+          <SearchBar ref={searchBarRef} />
         </Animated.View>
       </KeyboardAvoidingView>
 
@@ -96,6 +98,7 @@ export default function Main() {
         style={{ minHeight: "100%" }}
         ref={scrollRef}
         scrollEventThrottle={16}
+        onScrollBeginDrag={() => searchBarRef.current?.blur()}
         onScroll={Animated.event(
           [
             {

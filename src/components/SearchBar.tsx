@@ -16,10 +16,20 @@ import {
 } from "../hooks/useSearch";
 import { FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
-import { useState } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-export function SearchBar() {
+export interface SearchBarHandler {
+  blur: () => void;
+}
+
+function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
   const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<TextInput | null>(null);
 
   const { background, color } = useColor();
   const isLoading = useIsLoading();
@@ -40,6 +50,10 @@ export function SearchBar() {
   const handleBlur = () => setIsFocused(false);
 
   const handleFocus = () => setIsFocused(true);
+
+  useImperativeHandle(ref, () => ({
+    blur: () => inputRef.current?.blur(),
+  }));
 
   return (
     <View
@@ -86,6 +100,7 @@ export function SearchBar() {
             }}
           >
             <TextInput
+              ref={inputRef}
               placeholder="나무위키에서 검색..."
               value={keyword}
               onSubmitEditing={handleClickButton}
@@ -119,6 +134,8 @@ export function SearchBar() {
     </View>
   );
 }
+
+export default forwardRef(SearchBar);
 
 const styles = StyleSheet.create({
   inputWrapper: {
