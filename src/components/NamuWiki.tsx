@@ -19,8 +19,11 @@ const NEO_NAMU_BRIDGE = `
       const inputEl = document.getElementsByTagName("input")[0];
       
       const suggestionObserver = new MutationObserver(() => {
-        const suggestions = Array.from(inputEl.parentNode.children[1].children).map(_div => _div.children[0].innerHTML)
-        RN.postMessage('suggestion-result:' + suggestions);
+        const suggestionNode = inputEl.parentNode.children[1]
+        if (suggestionNode) {
+          const suggestions = Array.from(suggestionNode.children).map(_div => _div.children[0].innerHTML)
+          RN.postMessage('suggestion-result:' + suggestions);
+        }
       })
       
       suggestionObserver.observe(inputEl.parentNode, { childList: true, subtree: true, characterData: true })
@@ -63,7 +66,13 @@ export function NamuWiki() {
       setIsLoading(false);
       setResult(data.replace(/^html-result:/g, ""));
     } else if (data.startsWith("suggestion-result")) {
-      setSuggestion(data.replace(/^suggestion-result/g, "").split(","));
+      setSuggestion(
+        data
+          .replace(/^suggestion-result:/g, "")
+          .split(",")
+          .slice(0, 5)
+          .reverse()
+      );
     }
   };
 

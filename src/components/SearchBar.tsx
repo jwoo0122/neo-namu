@@ -8,14 +8,16 @@ import {
   View,
 } from "react-native";
 import { useIsLoading, useKeyword, useSuggestion } from "../hooks/useSearch";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Feather } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -24,12 +26,14 @@ export interface SearchBarHandler {
 function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput | null>(null);
+  const [localKeyword, setLocalKeyword] = useState("");
 
   const { background, color } = useColor();
   const [isLoading] = useIsLoading();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
+  const colorForButtons = isDark ? "#5A5A5A" : "#DFDFDF";
   const { transparent } = useColor();
 
   const [keyword, setKeyword] = useKeyword();
@@ -46,6 +50,23 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
     setKeyword(keyword);
     setIsFocused(true);
   };
+
+  const handleLocalKeywordChange = useDebouncedCallback(
+    (_localKeyword: string) => {
+      setKeyword(_localKeyword);
+    },
+    200
+  );
+
+  useEffect(() => {
+    handleLocalKeywordChange(localKeyword);
+  }, [localKeyword, handleLocalKeywordChange]);
+
+  useEffect(() => {
+    if (keyword !== localKeyword) {
+      setLocalKeyword(keyword);
+    }
+  }, [keyword]);
 
   useImperativeHandle(ref, () => ({
     blur: () => inputRef.current?.blur(),
@@ -64,7 +85,7 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
         <View style={[styles.linearGradient, { backgroundColor: background }]}>
           {isFocused && suggestion && suggestion.length !== 0 && (
             <View style={[styles.suggestions, { backgroundColor: background }]}>
-              {suggestion.reverse().map((_keyword) => (
+              {suggestion.map((_keyword) => (
                 <TouchableOpacity
                   key={_keyword}
                   onPress={() => {
@@ -73,8 +94,13 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
                     setIsLoading(true);
                   }}
                 >
-                  <View style={{ width: "100%", marginBottom: 10 }}>
-                    <Text style={{ color }}>{_keyword}</Text>
+                  <View style={styles.suggestionItem}>
+                    <Text style={{ color, fontSize: 18 }}>{_keyword}</Text>
+                    <Feather
+                      name="arrow-up-right"
+                      size={20}
+                      color={colorForButtons}
+                    />
                   </View>
                 </TouchableOpacity>
               )) || null}
@@ -98,9 +124,9 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
             <TextInput
               ref={inputRef}
               placeholder="나무위키에서 검색..."
-              value={keyword}
+              value={localKeyword}
               onSubmitEditing={handleClickButton}
-              onChangeText={setKeyword}
+              onChangeText={setLocalKeyword}
               style={[styles.input, { color }]}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -108,7 +134,7 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
             <View
               style={[
                 styles.searchButton,
-                { backgroundColor: isDark ? "#5A5A5A" : "#DFDFDF" },
+                { backgroundColor: colorForButtons },
               ]}
             >
               <TouchableOpacity onPress={handleClickButton}>
@@ -163,6 +189,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 29,
     backgroundColor: "red",
   },
+  suggestionItem: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
   input: {
     flex: 1,
     fontSize: 17,
@@ -170,6 +203,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginLeft: 10,
     color: "white",
+    fontWeight: "bold",
   },
   searchButton: {
     width: 40,
