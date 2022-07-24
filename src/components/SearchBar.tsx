@@ -1,5 +1,7 @@
 import {
   ActivityIndicator,
+  Animated,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
@@ -20,16 +22,27 @@ import React, {
 import { useDebouncedCallback } from "use-debounce";
 import { LinearGradient } from "expo-linear-gradient";
 import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface SearchBarHandler {
   blur: () => void;
 }
 
-function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
+interface SearchBarProps {
+  translateY?: Animated.AnimatedInterpolation;
+}
+
+function SearchBar(
+  props: SearchBarProps,
+  ref: React.ForwardedRef<SearchBarHandler>
+) {
+  const { translateY } = props;
+
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput | null>(null);
   const [localKeyword, setLocalKeyword] = useState("");
 
+  const { bottom: safeAreaBottom } = useSafeAreaInsets();
   const { background, color } = useColor();
   const [isLoading] = useIsLoading();
   const colorScheme = useColorScheme();
@@ -75,90 +88,120 @@ function SearchBar(_: any, ref: React.ForwardedRef<SearchBarHandler>) {
   }));
 
   return (
-    <View style={styles.positioner}>
-      <View style={styles.wrapper}>
-        <LinearGradient
-          end={{ x: 0.5, y: 1 }}
-          colors={[THEME_ORIGINAL, THEME_LIGHT]}
-          style={styles.linearGradient}
-        >
-          <View
-            style={[styles.searchBarWrapper, { backgroundColor: background }]}
-          >
-            {isFocused && suggestion && suggestion.length !== 0 && (
-              <View
-                style={[styles.suggestions, { backgroundColor: background }]}
-              >
-                {suggestion.map((_keyword) => (
-                  <TouchableOpacity
-                    key={_keyword}
-                    onPress={() => {
-                      handleBlur();
-                      setKeyword(_keyword);
-                      setIsLoading(true);
-                    }}
-                  >
-                    <View style={styles.suggestionItem}>
-                      <Text style={{ color, fontSize: 17 }}>{_keyword}</Text>
-                      <Feather
-                        name="arrow-up-right"
-                        size={20}
-                        color={colorForButtons}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )) || null}
-                <View
-                  style={{
-                    width: "100%",
-                    height: 2,
-                    backgroundColor: transparent,
-                  }}
-                />
-              </View>
-            )}
-
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
+    <KeyboardAvoidingView
+      behavior="padding"
+      keyboardVerticalOffset={10}
+      style={[
+        styles.keyboardAvoiding,
+        {
+          marginBottom: safeAreaBottom,
+        },
+      ]}
+    >
+      <Animated.View
+        style={{
+          width: "100%",
+          transform: [
+            {
+              translateY,
+            },
+          ],
+        }}
+      >
+        <View style={styles.positioner}>
+          <View style={styles.wrapper}>
+            <LinearGradient
+              end={{ x: 0.5, y: 1 }}
+              colors={[THEME_ORIGINAL, THEME_LIGHT]}
+              style={styles.linearGradient}
             >
-              <TextInput
-                ref={inputRef}
-                placeholder="나무위키에서 검색..."
-                value={localKeyword}
-                onSubmitEditing={handleClickButton}
-                onChangeText={setLocalKeyword}
-                style={[styles.input, { color }]}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              />
               <View
                 style={[
-                  styles.searchButton,
-                  { backgroundColor: colorForButtons },
+                  styles.searchBarWrapper,
+                  { backgroundColor: background },
                 ]}
               >
-                <TouchableOpacity onPress={handleClickButton}>
-                  {isLoading ? (
-                    <ActivityIndicator color={colorForIcon} />
-                  ) : (
-                    <FontAwesome
-                      name="search"
-                      size={20}
-                      color={colorForIcon}
-                      style={{ marginBottom: 2 }}
+                {isFocused && suggestion && suggestion.length !== 0 && (
+                  <View
+                    style={[
+                      styles.suggestions,
+                      { backgroundColor: background },
+                    ]}
+                  >
+                    {suggestion.map((_keyword) => (
+                      <TouchableOpacity
+                        key={_keyword}
+                        onPress={() => {
+                          handleBlur();
+                          setKeyword(_keyword);
+                          setIsLoading(true);
+                        }}
+                      >
+                        <View style={styles.suggestionItem}>
+                          <Text style={{ color, fontSize: 17 }}>
+                            {_keyword}
+                          </Text>
+                          <Feather
+                            name="arrow-up-right"
+                            size={20}
+                            color={colorForButtons}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    )) || null}
+                    <View
+                      style={{
+                        width: "100%",
+                        height: 2,
+                        backgroundColor: transparent,
+                      }}
                     />
-                  )}
-                </TouchableOpacity>
+                  </View>
+                )}
+
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <TextInput
+                    ref={inputRef}
+                    placeholder="나무위키에서 검색..."
+                    value={localKeyword}
+                    onSubmitEditing={handleClickButton}
+                    onChangeText={setLocalKeyword}
+                    style={[styles.input, { color }]}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <View
+                    style={[
+                      styles.searchButton,
+                      { backgroundColor: colorForButtons },
+                    ]}
+                  >
+                    <TouchableOpacity onPress={handleClickButton}>
+                      {isLoading ? (
+                        <ActivityIndicator color={colorForIcon} />
+                      ) : (
+                        <FontAwesome
+                          name="search"
+                          size={20}
+                          color={colorForIcon}
+                          style={{ marginBottom: 2 }}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
+            </LinearGradient>
           </View>
-        </LinearGradient>
-      </View>
-    </View>
+        </View>
+      </Animated.View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -167,6 +210,12 @@ export default forwardRef(SearchBar);
 const BASE_BORDER_RADIUS = 30;
 
 const styles = StyleSheet.create({
+  keyboardAvoiding: {
+    position: "absolute",
+    bottom: 20,
+    zIndex: 1,
+    width: "100%",
+  },
   positioner: {
     width: "100%",
     display: "flex",
