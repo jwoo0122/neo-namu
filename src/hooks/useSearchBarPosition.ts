@@ -41,7 +41,7 @@ export function useSearchBarPosition(scrollRef: ScrollView | null) {
     translationOffset
   ).interpolate({
     inputRange: [0, BOUND],
-    outputRange: [0, 120],
+    outputRange: [0, 160],
     extrapolate: "clamp",
   });
   const translationValue = useRef(0);
@@ -56,11 +56,13 @@ export function useSearchBarPosition(scrollRef: ScrollView | null) {
       Animated.timing(translationOffset, {
         toValue: BOUND - clampedScrollViewYDiffValue.current,
         useNativeDriver: true,
+        duration: 300,
       }).start();
     } else {
       Animated.timing(translationOffset, {
         toValue: -clampedScrollViewYDiffValue.current,
         useNativeDriver: true,
+        duration: 300,
       }).start();
     }
   };

@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Animated,
   KeyboardAvoidingView,
+  PanResponder,
   StyleSheet,
   Text,
   TextInput,
@@ -38,6 +39,12 @@ function SearchBar(
 ) {
   const { translateY } = props;
 
+  const animatedWrapperTranslateY = useRef(new Animated.Value(-20)).current;
+  const animatedWrapperTranslateYValue = useRef(-20);
+
+  const [isBottomSheetOpened, setIsBottomSheetOpened] = useState(false);
+  const isBottomSheetOpenedValue = useRef(false);
+
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput | null>(null);
   const [localKeyword, setLocalKeyword] = useState("");
@@ -49,6 +56,9 @@ function SearchBar(
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
   const colorForButtons = isDark ? "#5A5A5A" : "#DFDFDF";
+
+  const colorForJoystick = isDark ? "white" : "black";
+
   const { transparent } = useColor();
 
   const [keyword, setKeyword] = useKeyword();
@@ -73,6 +83,51 @@ function SearchBar(
     200
   );
 
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onPanResponderGrant: () => {
+        // @ts-ignore
+        animatedWrapperTranslateY.setOffset(
+          animatedWrapperTranslateYValue.current
+        );
+      },
+      onPanResponderMove: Animated.event(
+        [null, { dy: animatedWrapperTranslateY }],
+        { useNativeDriver: false }
+      ),
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy < -40 && !isBottomSheetOpenedValue.current) {
+          setIsBottomSheetOpened(true);
+          Animated.timing(animatedWrapperTranslateY, {
+            toValue: -500,
+            useNativeDriver: true,
+          }).start();
+        } else if (gestureState.dy > 40 && isBottomSheetOpenedValue.current) {
+          setIsBottomSheetOpened(false);
+          Animated.timing(animatedWrapperTranslateY, {
+            toValue: -20,
+            useNativeDriver: true,
+          }).start();
+        } else {
+          Animated.timing(animatedWrapperTranslateY, {
+            toValue: isBottomSheetOpenedValue.current ? -500 : -20,
+            useNativeDriver: true,
+          }).start();
+        }
+
+        animatedWrapperTranslateY.flattenOffset();
+      },
+    })
+  ).current;
+
+  useEffect(() => {
+    isBottomSheetOpenedValue.current = isBottomSheetOpened;
+  }, [isBottomSheetOpened]);
+
   useEffect(() => {
     handleLocalKeywordChange(localKeyword);
   }, [localKeyword, handleLocalKeywordChange]);
@@ -82,6 +137,14 @@ function SearchBar(
       setLocalKeyword(keyword);
     }
   }, [keyword]);
+
+  useEffect(() => {
+    const listener = animatedWrapperTranslateY.addListener(({ value }) => {
+      animatedWrapperTranslateYValue.current = value;
+    });
+
+    return () => animatedWrapperTranslateY.removeListener(listener);
+  }, [animatedWrapperTranslateY]);
 
   useImperativeHandle(ref, () => ({
     blur: () => inputRef.current?.blur(),
@@ -99,17 +162,45 @@ function SearchBar(
       ]}
     >
       <Animated.View
-        style={{
-          width: "100%",
-          transform: [
-            {
-              translateY,
-            },
-          ],
-        }}
+        style={
+          isBottomSheetOpened
+            ? { width: "100%" }
+            : {
+                width: "100%",
+                transform: [
+                  {
+                    translateY,
+                  },
+                ],
+              }
+        }
       >
-        <View style={styles.positioner}>
+        <Animated.View
+          style={[
+            styles.positioner,
+            { transform: [{ translateY: animatedWrapperTranslateY }] },
+          ]}
+        >
           <View style={styles.wrapper}>
+            <View style={styles.joystickWrapper} {...panResponder.panHandlers}>
+              <View
+                style={[
+                  styles.joystick,
+                  {
+                    backgroundColor: transparent,
+                    borderColor: colorForJoystick,
+                  },
+                ]}
+              />
+              <LinearGradient
+                colors={[colorForJoystick, THEME_ORIGINAL]}
+                style={{
+                  width: 2,
+                  height: 14,
+                }}
+              />
+            </View>
+
             <LinearGradient
               end={{ x: 0.5, y: 1 }}
               colors={[THEME_ORIGINAL, THEME_LIGHT]}
@@ -199,7 +290,7 @@ function SearchBar(
               </View>
             </LinearGradient>
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
     </KeyboardAvoidingView>
   );
@@ -212,8 +303,8 @@ const BASE_BORDER_RADIUS = 30;
 const styles = StyleSheet.create({
   keyboardAvoiding: {
     position: "absolute",
-    bottom: 20,
     zIndex: 1,
+    bottom: 0,
     width: "100%",
   },
   positioner: {
@@ -222,11 +313,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
   },
+  joystickWrapper: {
+    display: "flex",
+    alignItems: "center",
+  },
+  joystick: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 3,
+  },
   wrapper: {
     width: "100%",
     position: "absolute",
     bottom: 0,
     borderRadius: BASE_BORDER_RADIUS,
+    display: "flex",
+    alignItems: "center",
 
     /* Shadow */
     shadowColor: "#000",
