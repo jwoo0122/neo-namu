@@ -9,7 +9,7 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import { useIsBottomSheetOpened } from "./useIsBottomSheetOpened";
 
-const BOUND = 120;
+const BOUND = 200;
 
 export function useSearchBarPosition(scrollRef: ScrollView | null) {
   const { height: deviceHeight } = useWindowDimensions();
