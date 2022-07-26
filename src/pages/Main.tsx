@@ -1,92 +1,73 @@
-import { useRef, useState } from "react";
-import {
-  Button,
-  SafeAreaView,
-  TextInput,
-  View,
-  ScrollView,
-} from "react-native";
-import RenderHTML from "react-native-render-html";
-import WebView from "react-native-webview";
-import { NamuWiki } from "../backend/namuwiki";
+import { View, ScrollView, Animated, StyleSheet } from "react-native";
+import { NamuWiki } from "../components/NamuWiki";
+import Result from "../components/Result";
+import SearchBar, { SearchBarHandler } from "../components/SearchBar";
+import React, { useRef } from "react";
+import { useColor } from "../hooks/useColor";
+import { useSearchBarPosition } from "../hooks/useSearchBarPosition";
+import { SearchBarBackground } from "../components/SearchBarBackground";
+import { StatusBar } from "../components/StatusBar";
 
-export default function Main() {
-  const [keyword, setKeyword] = useState("");
-  const [result, setResult] = useState("");
-  const [loading, setLoading] = useState(false);
+function Main() {
+  const searchBarRef = useRef<SearchBarHandler | null>(null);
 
-  const namuWikiRef = useRef<WebView | null>(null);
-
-  const handleSearch = () => {
-    setLoading(true);
-    namuWikiRef.current?.postMessage(
-      `{ "from": "neo-namu-search", "keyword": "${keyword}" }`
-    );
-  };
-
-  const handleShowResult = (text: string) => {
-    setLoading(false);
-    setResult(text);
-  };
+  const scrollRef = useRef<ScrollView | null>(null);
+  const { background } = useColor();
+  const {
+    translation,
+    handleDragEnd,
+    handleHeightChange,
+    handleMomentumEnd,
+    scrollY,
+  } = useSearchBarPosition(scrollRef.current);
 
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            paddingHorizontal: 10,
-          }}
-        >
-          <TextInput
-            value={keyword}
-            onChangeText={setKeyword}
-            style={{
-              fontSize: 20,
-              width: "100%",
-              height: 45,
-              paddingHorizontal: 10,
-              borderRadius: 12,
-              backgroundColor: "white",
+    <View style={{ backgroundColor: background }}>
+      <StatusBar />
 
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 1,
+      <View style={styles.hiddenNamu}>
+        <NamuWiki />
+      </View>
+
+      <SearchBar ref={searchBarRef} translateY={translation} />
+
+      <SearchBarBackground />
+
+      <Animated.ScrollView
+        style={styles.result}
+        ref={scrollRef}
+        scrollEventThrottle={16}
+        onScrollEndDrag={handleDragEnd}
+        onMomentumScrollEnd={handleMomentumEnd}
+        onScrollBeginDrag={() => searchBarRef.current?.blur()}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: scrollY,
+                },
               },
-              shadowOpacity: 0.22,
-              shadowRadius: 2.22,
-
-              elevation: 3,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: "#00A495",
-              width: "100%",
-              height: 45,
-              marginTop: 10,
-              borderRadius: 12,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              title={loading ? "로딩 중..." : "검색"}
-              onPress={handleSearch}
-              color="white"
-            />
-          </View>
-        </View>
-        <View style={{ height: 0 }}>
-          <NamuWiki ref={namuWikiRef} onSuccess={handleShowResult} />
-        </View>
-        <View>
-          <RenderHTML contentWidth={100} source={{ html: result }} />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            },
+          ],
+          { useNativeDriver: true }
+        )}
+        onContentSizeChange={handleHeightChange}
+      >
+        <Result />
+      </Animated.ScrollView>
+    </View>
   );
 }
+
+export default React.memo(Main);
+
+const styles = StyleSheet.create({
+  result: {
+    minHeight: "100%",
+  },
+  hiddenNamu: {
+    width: "100%",
+    height: 0,
+  },
+});
