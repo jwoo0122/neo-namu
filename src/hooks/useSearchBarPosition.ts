@@ -7,14 +7,18 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useDebouncedCallback } from "use-debounce";
+import { useIsBottomSheetOpened } from "./useIsBottomSheetOpened";
 
 const BOUND = 120;
 
 export function useSearchBarPosition(scrollRef: ScrollView | null) {
   const { height: deviceHeight } = useWindowDimensions();
 
+  const [isBottomSheetOpened] = useIsBottomSheetOpened();
   const [contentHeight, setContentHeight] = useState(0);
-  const scrollYMax = Math.max(contentHeight - deviceHeight, 1);
+  const scrollYMax = isBottomSheetOpened
+    ? 0
+    : Math.max(contentHeight - deviceHeight, 1);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollYValue = useRef(0);

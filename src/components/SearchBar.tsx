@@ -24,6 +24,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { LinearGradient } from "expo-linear-gradient";
 import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -34,15 +35,14 @@ interface SearchBarProps {
 }
 
 function SearchBar(
-  props: SearchBarProps,
+  { translateY }: SearchBarProps,
   ref: React.ForwardedRef<SearchBarHandler>
 ) {
-  const { translateY } = props;
-
   const animatedWrapperTranslateY = useRef(new Animated.Value(-20)).current;
   const animatedWrapperTranslateYValue = useRef(-20);
 
-  const [isBottomSheetOpened, setIsBottomSheetOpened] = useState(false);
+  const [isBottomSheetOpened, setIsBottomSheetOpened] =
+    useIsBottomSheetOpened();
   const isBottomSheetOpenedValue = useRef(false);
 
   const [isFocused, setIsFocused] = useState(false);
@@ -162,18 +162,16 @@ function SearchBar(
       ]}
     >
       <Animated.View
-        style={
-          isBottomSheetOpened
-            ? { width: "100%" }
-            : {
-                width: "100%",
-                transform: [
-                  {
-                    translateY,
-                  },
-                ],
-              }
-        }
+        style={{
+          width: "100%",
+          transform: [
+            {
+              translateY: isBottomSheetOpened
+                ? new Animated.Value(0)
+                : translateY,
+            },
+          ],
+        }}
       >
         <Animated.View
           style={[

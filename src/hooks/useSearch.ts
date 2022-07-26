@@ -1,9 +1,10 @@
-import { atom, useAtom } from "jotai";
-
-const keywordAtom = atom("");
-const resultAtom = atom("");
-const isLoadingAtom = atom(false);
-const suggestionAtom = atom<string[]>([]);
+import { useAtom } from "jotai";
+import {
+  keywordAtom,
+  resultAtom,
+  isLoadingAtom,
+  suggestionAtom,
+} from "../atoms/search";
 
 export function useKeyword() {
   return useAtom(keywordAtom);
