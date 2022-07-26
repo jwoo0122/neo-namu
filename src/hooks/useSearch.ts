@@ -1,9 +1,11 @@
-import { atom, useAtom } from "jotai";
-
-const keywordAtom = atom("");
-const resultAtom = atom("");
-const isLoadingAtom = atom(false);
-const suggestionAtom = atom<string[]>([]);
+import { useAtom } from "jotai";
+import {
+  keywordAtom,
+  resultAtom,
+  isLoadingAtom,
+  suggestionAtom,
+} from "../atoms/search";
+import { useIsBottomSheetOpened } from "./useIsBottomSheetOpened";
 
 export function useKeyword() {
   return useAtom(keywordAtom);
@@ -19,4 +21,16 @@ export function useIsLoading() {
 
 export function useSuggestion() {
   return useAtom(suggestionAtom);
+}
+
+export function useSearch() {
+  const [, setIsBottomSheetOpened] = useIsBottomSheetOpened();
+  const [, setIsLoading] = useIsLoading();
+  const [, setKeyword] = useKeyword();
+
+  return (keyword: string) => {
+    setIsBottomSheetOpened(false);
+    setKeyword(keyword);
+    setIsLoading(true);
+  };
 }
