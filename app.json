@@ -1,37 +1,33 @@
 {
   "expo": {
-    "name": "네오나무",
+    "name": "neo-namu",
     "slug": "neo-namu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "cover"
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/38ff8079-0f6e-47fc-9e2d-40540cc5a50b"
+      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.leojinwoo.neonamu"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png"
-      },
-      "package": "com.leojinwoo.neonamu"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
     }
   }
 }
