@@ -81,6 +81,7 @@ function SearchBar(
   const handleFocus = () => {
     setKeyword(keyword);
     setIsFocused(true);
+    setIsBottomSheetOpened(false);
   };
 
   const handleLocalKeywordChange = useDebouncedCallback(

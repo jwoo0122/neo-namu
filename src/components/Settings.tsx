@@ -13,9 +13,10 @@ import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { SEARCH_BAR_BOTTOM } from "../constants/position";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { backgroundShadow } from "../styles/background";
-import { Entypo, AntDesign } from "@expo/vector-icons";
+import { Entypo, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 import { useIsDarkmode } from "../hooks/useIsDarkmode";
+import { useHistory } from "../hooks/useHistory";
 
 const SETTING_Y_OFFSET = 20;
 const SETTING_Y_OFFSET_ON_VISIBLE = 20;
@@ -26,6 +27,7 @@ export function Settings() {
   const [isBottomSheetOpened] = useIsBottomSheetOpened();
   const { background, color } = useColor();
   const isDarkmode = useIsDarkmode();
+  const [history] = useHistory();
 
   const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET;
 
@@ -52,7 +54,7 @@ export function Settings() {
         },
       ]}
     >
-      <ScrollView>
+      <ScrollView contentInset={{ top: 0, bottom: 500 }}>
         <TouchableHighlight
           style={{ marginTop: 16 }}
           onPress={() => alert("Under development")}
@@ -61,7 +63,7 @@ export function Settings() {
           }
         >
           <View style={styles.row}>
-            <View style={styles.settingText}>
+            <View style={styles.rowHeader}>
               <AntDesign
                 name="setting"
                 size={18}
@@ -76,17 +78,44 @@ export function Settings() {
         <View style={styles.historyHeader}>
           <Text style={[styles.historyHeaderText, { color }]}>검색 기록</Text>
         </View>
-        <TouchableHighlight
-          onPress={() => alert("Under development")}
-          underlayColor={
-            isDarkmode ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.2)"
-          }
-        >
+        {history.length !== 0 ? (
+          history.map((keyword, index) => (
+            <TouchableHighlight
+              key={`${keyword}-${index}`}
+              onPress={() => alert("Under development")}
+              underlayColor={
+                isDarkmode ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.2)"
+              }
+            >
+              <View style={styles.row}>
+                <View style={styles.rowHeader}>
+                  <FontAwesome
+                    name="search"
+                    size={16}
+                    color="grey"
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={[styles.rowText, { color }]}>{keyword}</Text>
+                </View>
+              </View>
+            </TouchableHighlight>
+          ))
+        ) : (
           <View style={styles.row}>
-            <Text style={[styles.rowText, { color }]}>검색 기록 (개발 중)</Text>
-            <Entypo name="chevron-right" size={18} color="grey" />
+            <Text
+              style={[
+                styles.rowText,
+                {
+                  color: isDarkmode
+                    ? "rgba(255, 255, 255, 0.2)"
+                    : "rgba(0, 0, 0, 0.2)",
+                },
+              ]}
+            >
+              검색 기록이 없어요.
+            </Text>
           </View>
-        </TouchableHighlight>
+        )}
       </ScrollView>
     </Animated.View>
   );
@@ -102,7 +131,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     borderWidth: 2,
   },
-  settingText: {
+  rowHeader: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -121,13 +150,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    height: 56,
+    height: 54,
     paddingRight: 10,
     paddingLeft: 16,
   },
   historyHeader: {
-    paddingTop: 36,
-    paddingBottom: 16,
+    paddingTop: 28,
+    paddingBottom: 12,
     paddingLeft: 16,
   },
   historyHeaderText: {

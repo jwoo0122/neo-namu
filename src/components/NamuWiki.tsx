@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { WebView } from "react-native-webview";
 import { WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
+import { useHistory } from "../hooks/useHistory";
 import {
   useIsLoading,
   useKeyword,
@@ -56,6 +57,7 @@ const NEO_NAMU_BRIDGE = `
 export function NamuWiki() {
   const [keyword] = useKeyword();
   const [isLoading, setIsLoading] = useIsLoading();
+  const [, setHistory] = useHistory();
   const [, setResult] = useResult();
   const [, setSuggestion] = useSuggestion();
 
@@ -89,6 +91,8 @@ export function NamuWiki() {
     if (isLoading) {
       namuWikiRef.current?.postMessage(`{ "type": "neo-namu-search" }`);
     }
+
+    setHistory((prevHistory) => prevHistory.add(keyword));
   }, [isLoading]);
 
   return (
