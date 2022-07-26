@@ -25,6 +25,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
+import { ZIndex } from "../constants/zIndex";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -301,7 +302,7 @@ const BASE_BORDER_RADIUS = 30;
 const styles = StyleSheet.create({
   keyboardAvoiding: {
     position: "absolute",
-    zIndex: 1,
+    zIndex: ZIndex.SEARCHBAR,
     bottom: 0,
     width: "100%",
   },
