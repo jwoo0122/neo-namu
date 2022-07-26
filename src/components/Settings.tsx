@@ -17,6 +17,7 @@ import { Entypo, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 import { useIsDarkmode } from "../hooks/useIsDarkmode";
 import { useHistory } from "../hooks/useHistory";
+import { useSearch } from "../hooks/useSearch";
 
 const SETTING_Y_OFFSET = 20;
 const SETTING_Y_OFFSET_ON_VISIBLE = 20;
@@ -28,6 +29,8 @@ export function Settings() {
   const { background, color } = useColor();
   const isDarkmode = useIsDarkmode();
   const [history] = useHistory();
+
+  const search = useSearch();
 
   const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET;
 
@@ -82,7 +85,7 @@ export function Settings() {
           history.map((keyword, index) => (
             <TouchableHighlight
               key={`${keyword}-${index}`}
-              onPress={() => alert("Under development")}
+              onPress={() => search(keyword)}
               underlayColor={
                 isDarkmode ? "rgba(0, 0, 0, 0.2)" : "rgba(255, 255, 255, 0.2)"
               }

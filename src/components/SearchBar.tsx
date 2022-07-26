@@ -10,7 +10,12 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { useIsLoading, useKeyword, useSuggestion } from "../hooks/useSearch";
+import {
+  useIsLoading,
+  useKeyword,
+  useSearch,
+  useSuggestion,
+} from "../hooks/useSearch";
 import { FontAwesome, Feather } from "@expo/vector-icons";
 import { useColor } from "../hooks/useColor";
 import React, {
@@ -59,6 +64,8 @@ function SearchBar(
   const { bottom: safeAreaBottom } = useSafeAreaInsets();
   const { background, color } = useColor();
   const [isLoading] = useIsLoading();
+  const search = useSearch();
+
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
@@ -244,8 +251,7 @@ function SearchBar(
                         key={_keyword}
                         onPress={() => {
                           handleBlur();
-                          setKeyword(_keyword);
-                          setIsLoading(true);
+                          search(_keyword);
                         }}
                       >
                         <View style={styles.suggestionItem}>
