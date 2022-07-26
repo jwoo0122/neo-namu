@@ -85,6 +85,22 @@ function SearchBar(
     200
   );
 
+  const goDown = () => {
+    Animated.timing(animatedWrapperTranslateY, {
+      toValue: -20,
+      useNativeDriver: true,
+      duration: SEARCHBAR_TRANSITION_DURATION,
+    }).start();
+  };
+
+  const goUp = () => {
+    Animated.timing(animatedWrapperTranslateY, {
+      toValue: -500,
+      useNativeDriver: true,
+      duration: SEARCHBAR_TRANSITION_DURATION,
+    }).start();
+  };
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -104,24 +120,12 @@ function SearchBar(
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dy < -40 && !isBottomSheetOpenedValue.current) {
           setIsBottomSheetOpened(true);
-          Animated.timing(animatedWrapperTranslateY, {
-            toValue: -500,
-            useNativeDriver: true,
-            duration: SEARCHBAR_TRANSITION_DURATION,
-          }).start();
+          goUp();
         } else if (gestureState.dy > 40 && isBottomSheetOpenedValue.current) {
           setIsBottomSheetOpened(false);
-          Animated.timing(animatedWrapperTranslateY, {
-            toValue: -20,
-            useNativeDriver: true,
-            duration: SEARCHBAR_TRANSITION_DURATION,
-          }).start();
+          goDown();
         } else {
-          Animated.timing(animatedWrapperTranslateY, {
-            toValue: isBottomSheetOpenedValue.current ? -500 : -20,
-            useNativeDriver: true,
-            duration: SEARCHBAR_TRANSITION_DURATION,
-          }).start();
+          isBottomSheetOpenedValue.current ? goUp() : goDown();
         }
 
         animatedWrapperTranslateY.flattenOffset();
@@ -131,6 +135,12 @@ function SearchBar(
 
   useEffect(() => {
     isBottomSheetOpenedValue.current = isBottomSheetOpened;
+
+    if (isBottomSheetOpened) {
+      goUp();
+    } else {
+      goDown();
+    }
   }, [isBottomSheetOpened]);
 
   useEffect(() => {
