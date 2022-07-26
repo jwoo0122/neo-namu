@@ -27,6 +27,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { ZIndex } from "../constants/zIndex";
 import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
+import { Settings } from "./Settings";
+import { SEARCH_BAR_BOTTOM } from "../constants/position";
+import { backgroundShadow } from "../styles/background";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -40,8 +43,10 @@ function SearchBar(
   { translateY }: SearchBarProps,
   ref: React.ForwardedRef<SearchBarHandler>
 ) {
-  const animatedWrapperTranslateY = useRef(new Animated.Value(-20)).current;
-  const animatedWrapperTranslateYValue = useRef(-20);
+  const animatedWrapperTranslateY = useRef(
+    new Animated.Value(-SEARCH_BAR_BOTTOM)
+  ).current;
+  const animatedWrapperTranslateYValue = useRef(-SEARCH_BAR_BOTTOM);
 
   const [isBottomSheetOpened, setIsBottomSheetOpened] =
     useIsBottomSheetOpened();
@@ -194,7 +199,8 @@ function SearchBar(
             { transform: [{ translateY: animatedWrapperTranslateY }] },
           ]}
         >
-          <View style={styles.wrapper}>
+          <Settings />
+          <View style={[styles.wrapper, backgroundShadow.style]}>
             <View style={styles.joystickWrapper} {...panResponder.panHandlers}>
               <View
                 style={[
@@ -343,16 +349,6 @@ const styles = StyleSheet.create({
     borderRadius: BASE_BORDER_RADIUS,
     display: "flex",
     alignItems: "center",
-
-    /* Shadow */
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-    elevation: 7,
   },
   linearGradient: {
     width: "100%",
