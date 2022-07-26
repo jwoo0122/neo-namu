@@ -26,6 +26,7 @@ import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { ZIndex } from "../constants/zIndex";
+import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -106,17 +107,20 @@ function SearchBar(
           Animated.timing(animatedWrapperTranslateY, {
             toValue: -500,
             useNativeDriver: true,
+            duration: SEARCHBAR_TRANSITION_DURATION,
           }).start();
         } else if (gestureState.dy > 40 && isBottomSheetOpenedValue.current) {
           setIsBottomSheetOpened(false);
           Animated.timing(animatedWrapperTranslateY, {
             toValue: -20,
             useNativeDriver: true,
+            duration: SEARCHBAR_TRANSITION_DURATION,
           }).start();
         } else {
           Animated.timing(animatedWrapperTranslateY, {
             toValue: isBottomSheetOpenedValue.current ? -500 : -20,
             useNativeDriver: true,
+            duration: SEARCHBAR_TRANSITION_DURATION,
           }).start();
         }
 

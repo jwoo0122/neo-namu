@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, TouchableWithoutFeedback } from "react-native";
+import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { ZIndex } from "../constants/zIndex";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 
@@ -13,6 +14,7 @@ export function SearchBarBackground() {
     Animated.timing(opacity, {
       toValue: isBottomSheetOpened ? 0.5 : 0,
       useNativeDriver: true,
+      duration: SEARCHBAR_TRANSITION_DURATION,
     }).start();
   }, [isBottomSheetOpened]);
 
