@@ -263,7 +263,11 @@ function SearchBar(
         >
           <Settings />
           <View style={[styles.wrapper, backgroundShadow.style]}>
-            <View style={styles.joystickWrapper} {...panResponder.panHandlers}>
+            <View
+              style={styles.joystickWrapper}
+              pointerEvents={isBottomSheetOpened || isFocused ? "none" : "auto"}
+              {...panResponder.panHandlers}
+            >
               <Animated.View
                 style={[
                   styles.joystick,
