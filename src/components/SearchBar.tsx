@@ -35,6 +35,7 @@ import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { Settings } from "./Settings";
 import { SEARCH_BAR_BOTTOM } from "../constants/position";
 import { backgroundShadow } from "../styles/background";
+import { useNavigatorGesture } from "../hooks/useNavigatorGesture";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -48,11 +49,17 @@ function SearchBar(
   { translateY }: SearchBarProps,
   ref: React.ForwardedRef<SearchBarHandler>
 ) {
-  const animatedWrapperTranslateY = useRef(
+  const searchBarTranslation = useRef(
     new Animated.Value(-SEARCH_BAR_BOTTOM)
   ).current;
-  const animatedWrapperTranslateYValue = useRef(-SEARCH_BAR_BOTTOM);
+  const searchBarTranslationValue = useRef(-SEARCH_BAR_BOTTOM);
 
+  const joystickTranslation = useRef(
+    new Animated.ValueXY({ x: 0, y: 0 })
+  ).current;
+
+  const [navigatorGesture, setNavigatorGesture] = useNavigatorGesture();
+  const navigatorGestureValue = useRef(navigatorGesture);
   const [isBottomSheetOpened, setIsBottomSheetOpened] =
     useIsBottomSheetOpened();
   const isBottomSheetOpenedValue = useRef(false);
@@ -99,7 +106,7 @@ function SearchBar(
   );
 
   const goDown = () => {
-    Animated.timing(animatedWrapperTranslateY, {
+    Animated.timing(searchBarTranslation, {
       toValue: -20,
       useNativeDriver: true,
       duration: SEARCHBAR_TRANSITION_DURATION,
@@ -107,7 +114,7 @@ function SearchBar(
   };
 
   const goUp = () => {
-    Animated.timing(animatedWrapperTranslateY, {
+    Animated.timing(searchBarTranslation, {
       toValue: -500,
       useNativeDriver: true,
       duration: SEARCHBAR_TRANSITION_DURATION,
@@ -120,28 +127,32 @@ function SearchBar(
       onMoveShouldSetPanResponderCapture: () => true,
       onStartShouldSetPanResponder: () => true,
       onStartShouldSetPanResponderCapture: () => true,
-      onPanResponderGrant: () => {
-        // @ts-ignore
-        animatedWrapperTranslateY.setOffset(
-          animatedWrapperTranslateYValue.current
-        );
-      },
       onPanResponderMove: Animated.event(
-        [null, { dy: animatedWrapperTranslateY }],
+        [
+          null,
+          {
+            dx: joystickTranslation.x,
+            dy: joystickTranslation.y,
+          },
+        ],
         { useNativeDriver: false }
       ),
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dy < -40 && !isBottomSheetOpenedValue.current) {
+      onPanResponderRelease: () => {
+        if (
+          navigatorGestureValue.current === "setting" &&
+          !isBottomSheetOpenedValue.current
+        ) {
           setIsBottomSheetOpened(true);
           goUp();
-        } else if (gestureState.dy > 40 && isBottomSheetOpenedValue.current) {
-          setIsBottomSheetOpened(false);
-          goDown();
-        } else {
-          isBottomSheetOpenedValue.current ? goUp() : goDown();
         }
 
-        animatedWrapperTranslateY.flattenOffset();
+        Animated.timing(joystickTranslation, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: true,
+          duration: SEARCHBAR_TRANSITION_DURATION,
+        }).start();
+
+        joystickTranslation.flattenOffset();
       },
     })
   ).current;
@@ -167,12 +178,38 @@ function SearchBar(
   }, [keyword]);
 
   useEffect(() => {
-    const listener = animatedWrapperTranslateY.addListener(({ value }) => {
-      animatedWrapperTranslateYValue.current = value;
+    const listener = searchBarTranslation.addListener(({ value }) => {
+      searchBarTranslationValue.current = value;
     });
 
-    return () => animatedWrapperTranslateY.removeListener(listener);
-  }, [animatedWrapperTranslateY]);
+    return () => searchBarTranslation.removeListener(listener);
+  }, [searchBarTranslation]);
+
+  useEffect(() => {
+    navigatorGestureValue.current = navigatorGesture;
+  }, [navigatorGesture]);
+
+  useEffect(() => {
+    const listener = joystickTranslation.addListener(({ x, y }) => {
+      const distance = Math.floor(y ** 2 + x ** 2);
+      const joystickAngle = y / x;
+
+      if (distance <= 3000) {
+        setNavigatorGesture("none");
+        return;
+      }
+
+      if (joystickAngle >= -1 && joystickAngle < 0) {
+        setNavigatorGesture("forward");
+      } else if (joystickAngle < -1 || joystickAngle > 1) {
+        setNavigatorGesture("setting");
+      } else if (joystickAngle <= 1 && joystickAngle >= 0) {
+        setNavigatorGesture("back");
+      }
+    });
+
+    return () => joystickTranslation.removeListener(listener);
+  }, [joystickTranslation]);
 
   useImperativeHandle(ref, () => ({
     blur: () => inputRef.current?.blur(),
@@ -194,9 +231,7 @@ function SearchBar(
           width: "100%",
           transform: [
             {
-              translateY: isBottomSheetOpened
-                ? new Animated.Value(0)
-                : translateY,
+              translateY,
             },
           ],
         }}
@@ -204,18 +239,24 @@ function SearchBar(
         <Animated.View
           style={[
             styles.positioner,
-            { transform: [{ translateY: animatedWrapperTranslateY }] },
+            {
+              transform: [{ translateY: searchBarTranslation }],
+            },
           ]}
         >
           <Settings />
           <View style={[styles.wrapper, backgroundShadow.style]}>
             <View style={styles.joystickWrapper} {...panResponder.panHandlers}>
-              <View
+              <Animated.View
                 style={[
                   styles.joystick,
                   {
                     backgroundColor: transparent,
                     borderColor: colorForJoystick,
+                    transform: [
+                      { translateX: joystickTranslation.x },
+                      { translateY: joystickTranslation.y },
+                    ],
                   },
                 ]}
               />
@@ -340,8 +381,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   joystickWrapper: {
+    position: "absolute",
     display: "flex",
     alignItems: "center",
+    top: -30,
+    zIndex: ZIndex.SEARCHBAR_JOYSTICK,
   },
   joystick: {
     width: 18,
