@@ -80,7 +80,7 @@ function SearchBar(
   const colorForIcon = isDark ? "white" : "#3F3F3F";
   const colorForButtons = isDark ? "#5A5A5A" : "#DFDFDF";
 
-  const colorForJoystick = isDark ? "white" : "black";
+  const colorForJoystick = isDark ? "white" : "#303030";
 
   const { transparent } = useColor();
 
@@ -211,7 +211,7 @@ function SearchBar(
       const distance = Math.floor(y ** 2 + x ** 2);
       const joystickAngle = y / x;
 
-      if (distance <= 3000) {
+      if (distance <= 3000 || y > 0) {
         setNavigatorGesture("none");
         return;
       }

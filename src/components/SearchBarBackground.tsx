@@ -9,15 +9,16 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { ZIndex } from "../constants/zIndex";
-import { useColor } from "../hooks/useColor";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { useNavigatorGesture } from "../hooks/useNavigatorGesture";
 import { useHistory } from "../hooks/useHistory";
 import { useNavigation } from "../hooks/useNavigation";
 import { useNavigator } from "../hooks/useNavigator";
+import { useIsDarkmode } from "../hooks/useIsDarkmode";
 
 export function SearchBarBackground() {
-  const { color } = useColor();
+  const isDarkmode = useIsDarkmode();
+  const backgroundColor = !isDarkmode ? "rgb(40, 40, 40)" : "rgb(0, 0, 0)";
   const [history] = useHistory();
   const [navigator] = useNavigator();
   const { canGoBack, canGoForward } = useNavigation();
@@ -39,32 +40,32 @@ export function SearchBarBackground() {
         if (!canGoBack) {
           return [
             "",
-            <AntDesign name="close" size={50} color={color} />,
+            <AntDesign name="close" size={50} color="white" />,
           ] as const;
         }
 
         return [
           `이전 문서: ${history[navigator + 1]}`,
-          <AntDesign name="arrowleft" size={50} color={color} />,
+          <AntDesign name="arrowleft" size={50} color="white" />,
         ] as const;
       }
       case "forward": {
         if (!canGoForward) {
           return [
             "",
-            <AntDesign name="close" size={50} color={color} />,
+            <AntDesign name="close" size={50} color="white" />,
           ] as const;
         }
 
         return [
           `다음 문서: ${history[navigator - 1]}`,
-          <AntDesign name="arrowright" size={50} color={color} />,
+          <AntDesign name="arrowright" size={50} color="white" />,
         ] as const;
       }
       case "setting":
         return [
           "설정",
-          <AntDesign name="setting" size={50} color={color} />,
+          <AntDesign name="setting" size={50} color="white" />,
         ] as const;
       case "none":
       default:
@@ -88,6 +89,7 @@ export function SearchBarBackground() {
         style={[
           styles.wrapper,
           {
+            backgroundColor,
             opacity,
           },
         ]}
@@ -97,7 +99,7 @@ export function SearchBarBackground() {
         <Text
           style={{
             fontSize: 38,
-            color,
+            color: "white",
             fontWeight: "bold",
             opacity: 1,
           }}
@@ -117,7 +119,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "100%",
-    backgroundColor: "rgb(0, 0, 0)",
     zIndex: ZIndex.SEARCHBAR_BACKGROUND,
   },
 });

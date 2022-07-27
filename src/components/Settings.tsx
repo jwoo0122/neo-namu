@@ -19,7 +19,7 @@ import { useIsDarkmode } from "../hooks/useIsDarkmode";
 import { useHistory } from "../hooks/useHistory";
 import { useSearch } from "../hooks/useSearch";
 
-const SETTING_Y_OFFSET = 20;
+const SETTING_Y_OFFSET_ON_HIDE = 40;
 const SETTING_Y_OFFSET_ON_VISIBLE = 20;
 
 export function Settings() {
@@ -32,7 +32,7 @@ export function Settings() {
 
   const search = useSearch();
 
-  const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET;
+  const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET_ON_HIDE;
 
   const top = useRef(new Animated.Value(topWhenHide)).current;
 
