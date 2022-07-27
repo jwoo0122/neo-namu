@@ -19,7 +19,7 @@ import { useIsDarkmode } from "../hooks/useIsDarkmode";
 import { useHistory } from "../hooks/useHistory";
 import { useSearch } from "../hooks/useSearch";
 
-const SETTING_Y_OFFSET = 20;
+const SETTING_Y_OFFSET_ON_HIDE = 40;
 const SETTING_Y_OFFSET_ON_VISIBLE = 20;
 
 export function Settings() {
@@ -32,7 +32,7 @@ export function Settings() {
 
   const search = useSearch();
 
-  const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET;
+  const topWhenHide = bottom + SEARCH_BAR_BOTTOM + SETTING_Y_OFFSET_ON_HIDE;
 
   const top = useRef(new Animated.Value(topWhenHide)).current;
 
@@ -94,7 +94,7 @@ export function Settings() {
                 <View style={styles.rowHeader}>
                   <FontAwesome
                     name="search"
-                    size={16}
+                    size={20}
                     color="grey"
                     style={{ marginRight: 8 }}
                   />
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
   },
   historyHeaderText: {
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: "bold",
   },
   rowText: {
-    fontSize: 16,
+    fontSize: 18,
   },
 });

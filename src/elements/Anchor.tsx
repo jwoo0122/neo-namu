@@ -1,17 +1,18 @@
 import { CustomRendererProps, TText } from "react-native-render-html";
 import { THEME_ORIGINAL } from "../constants/color";
-import { useIsLoading, useKeyword } from "../hooks/useSearch";
+import { useSearch } from "../hooks/useSearch";
 import {
   openBrowserAsync,
   WebBrowserPresentationStyle,
 } from "expo-web-browser";
 import { Entypo } from "@expo/vector-icons";
+import { useNavigation } from "../hooks/useNavigation";
 
 interface AnchorProps extends CustomRendererProps<TText> {}
 
 export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
-  const [, setKeyword] = useKeyword();
-  const [, setIsLoading] = useIsLoading();
+  const { goRecent } = useNavigation();
+  const search = useSearch();
 
   const link = decodeURI(tnode.attributes["href"]);
   const isOutlink = link.startsWith("https://");
@@ -24,8 +25,8 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
         presentationStyle: WebBrowserPresentationStyle.FULL_SCREEN,
       });
     } else if (isInternalLink) {
-      setKeyword(link.replace("/w/", ""));
-      setIsLoading(true);
+      goRecent();
+      search(link.replace("/w/", ""));
     } else {
       alert("Not supported link");
     }
