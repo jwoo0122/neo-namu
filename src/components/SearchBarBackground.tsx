@@ -6,15 +6,21 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { ZIndex } from "../constants/zIndex";
 import { useColor } from "../hooks/useColor";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { useNavigatorGesture } from "../hooks/useNavigatorGesture";
+import { useHistory } from "../hooks/useHistory";
+import { useNavigation } from "../hooks/useNavigation";
+import { useNavigator } from "../hooks/useNavigator";
 
 export function SearchBarBackground() {
   const { color } = useColor();
+  const [history] = useHistory();
+  const [navigator] = useNavigator();
+  const { canGoBack, canGoForward } = useNavigation();
 
   const [isBottomSheetOpened, setIsBottomSheetOpened] =
     useIsBottomSheetOpened();
@@ -27,18 +33,34 @@ export function SearchBarBackground() {
     return false;
   }, [navigatorGesture]);
 
-  const indicateText = useMemo(() => {
+  const indicateText = (() => {
     switch (navigatorGesture) {
-      case "back":
+      case "back": {
+        if (!canGoBack) {
+          return [
+            "처음이에요",
+            <Entypo name="cross" size={60} color={color} />,
+          ] as const;
+        }
+
         return [
-          "뒤로",
+          history[navigator + 1],
           <AntDesign name="arrowleft" size={60} color={color} />,
         ] as const;
-      case "forward":
+      }
+      case "forward": {
+        if (!canGoForward) {
+          return [
+            "최근이에요",
+            <Entypo name="cross" size={60} color={color} />,
+          ] as const;
+        }
+
         return [
-          "앞으로",
+          history[navigator - 1],
           <AntDesign name="arrowright" size={60} color={color} />,
         ] as const;
+      }
       case "setting":
         return [
           "설정",
@@ -48,7 +70,7 @@ export function SearchBarBackground() {
       default:
         return ["", null];
     }
-  }, [navigatorGesture, color]);
+  })();
 
   const opacity = useRef(new Animated.Value(0)).current;
 

@@ -36,6 +36,7 @@ import { Settings } from "./Settings";
 import { SEARCH_BAR_BOTTOM } from "../constants/position";
 import { backgroundShadow } from "../styles/background";
 import { useNavigatorGesture } from "../hooks/useNavigatorGesture";
+import { useNavigation } from "../hooks/useNavigation";
 
 export interface SearchBarHandler {
   blur: () => void;
@@ -59,6 +60,7 @@ function SearchBar(
   ).current;
 
   const [navigatorGesture, setNavigatorGesture] = useNavigatorGesture();
+  const { goBack, goForward, goRecent } = useNavigation();
   const navigatorGestureValue = useRef(navigatorGesture);
   const [isBottomSheetOpened, setIsBottomSheetOpened] =
     useIsBottomSheetOpened();
@@ -87,6 +89,8 @@ function SearchBar(
   const [, setIsLoading] = useIsLoading();
 
   const handleClickButton = () => {
+    goRecent();
+    handleBlur();
     setIsLoading(true);
   };
 
@@ -121,6 +125,15 @@ function SearchBar(
     }).start();
   };
 
+  const goBackForPanResponder = useRef(goBack);
+  useEffect(() => {
+    goBackForPanResponder.current = goBack;
+  }, [goBack]);
+  const goForwardForPanResponder = useRef(goForward);
+  useEffect(() => {
+    goForwardForPanResponder.current = goForward;
+  }, [goForward]);
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -144,6 +157,10 @@ function SearchBar(
         ) {
           setIsBottomSheetOpened(true);
           goUp();
+        } else if (navigatorGestureValue.current === "back") {
+          goBackForPanResponder.current();
+        } else if (navigatorGestureValue.current === "forward") {
+          goForwardForPanResponder.current();
         }
 
         Animated.timing(joystickTranslation, {
@@ -291,6 +308,7 @@ function SearchBar(
                       <TouchableOpacity
                         key={_keyword}
                         onPress={() => {
+                          goRecent();
                           handleBlur();
                           search(_keyword);
                         }}
