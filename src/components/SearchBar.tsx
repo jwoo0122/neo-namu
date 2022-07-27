@@ -277,13 +277,6 @@ function SearchBar(
                   },
                 ]}
               />
-              <LinearGradient
-                colors={[colorForJoystick, THEME_ORIGINAL]}
-                style={{
-                  width: 2,
-                  height: 14,
-                }}
-              />
             </View>
 
             <LinearGradient
@@ -402,14 +395,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     display: "flex",
     alignItems: "center",
-    top: -30,
+    top: -36,
     zIndex: ZIndex.SEARCHBAR_JOYSTICK,
   },
   joystick: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 3,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 4,
   },
   wrapper: {
     width: "100%",
@@ -443,8 +436,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 17,
-    height: 40,
+    fontSize: 20,
+    height: 42,
     paddingHorizontal: 10,
     marginLeft: 10,
     color: "white",

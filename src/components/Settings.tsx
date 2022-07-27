@@ -94,7 +94,7 @@ export function Settings() {
                 <View style={styles.rowHeader}>
                   <FontAwesome
                     name="search"
-                    size={16}
+                    size={20}
                     color="grey"
                     style={{ marginRight: 8 }}
                   />
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
   },
   historyHeaderText: {
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: "bold",
   },
   rowText: {
-    fontSize: 16,
+    fontSize: 18,
   },
 });
