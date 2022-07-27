@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
 import { ZIndex } from "../constants/zIndex";
 import { useColor } from "../hooks/useColor";
@@ -38,33 +38,33 @@ export function SearchBarBackground() {
       case "back": {
         if (!canGoBack) {
           return [
-            "처음이에요",
-            <Entypo name="cross" size={60} color={color} />,
+            "",
+            <AntDesign name="close" size={50} color={color} />,
           ] as const;
         }
 
         return [
-          history[navigator + 1],
-          <AntDesign name="arrowleft" size={60} color={color} />,
+          `이전 문서: ${history[navigator + 1]}`,
+          <AntDesign name="arrowleft" size={50} color={color} />,
         ] as const;
       }
       case "forward": {
         if (!canGoForward) {
           return [
-            "최근이에요",
-            <Entypo name="cross" size={60} color={color} />,
+            "",
+            <AntDesign name="close" size={50} color={color} />,
           ] as const;
         }
 
         return [
-          history[navigator - 1],
-          <AntDesign name="arrowright" size={60} color={color} />,
+          `다음 문서: ${history[navigator - 1]}`,
+          <AntDesign name="arrowright" size={50} color={color} />,
         ] as const;
       }
       case "setting":
         return [
           "설정",
-          <AntDesign name="setting" size={60} color={color} />,
+          <AntDesign name="setting" size={50} color={color} />,
         ] as const;
       case "none":
       default:
@@ -76,7 +76,7 @@ export function SearchBarBackground() {
 
   useEffect(() => {
     Animated.timing(opacity, {
-      toValue: isBottomSheetOpened || shouldShowIndicator ? 0.5 : 0,
+      toValue: isBottomSheetOpened || shouldShowIndicator ? 0.7 : 0,
       useNativeDriver: true,
       duration: SEARCHBAR_TRANSITION_DURATION,
     }).start();
@@ -94,7 +94,16 @@ export function SearchBarBackground() {
         pointerEvents={isBottomSheetOpened ? "box-only" : "none"}
       >
         <View style={{ marginBottom: 10 }}>{indicateText[1]}</View>
-        <Text style={{ fontSize: 50, color }}>{indicateText[0]}</Text>
+        <Text
+          style={{
+            fontSize: 38,
+            color,
+            fontWeight: "bold",
+            opacity: 1,
+          }}
+        >
+          {indicateText[0]}
+        </Text>
       </Animated.View>
     </TouchableWithoutFeedback>
   );
