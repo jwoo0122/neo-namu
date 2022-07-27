@@ -22,7 +22,7 @@ const NEO_NAMU_BRIDGE = `
       const suggestionObserver = new MutationObserver(() => {
         const suggestionNode = inputEl.parentNode.children[1]
         if (suggestionNode) {
-          const suggestions = Array.from(suggestionNode.children).map(_div => _div.children[0].innerHTML)
+          const suggestions = Array.from(suggestionNode.children).map(_div => { return _div.children[0].innerHTML })
           RN.postMessage('suggestion-result:' + suggestions);
         }
       })

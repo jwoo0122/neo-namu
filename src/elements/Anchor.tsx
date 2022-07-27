@@ -14,7 +14,13 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   const { goRecent } = useNavigation();
   const search = useSearch();
 
-  const link = decodeURI(tnode.attributes["href"]);
+  const link = (() => {
+    try {
+      return decodeURI(tnode.attributes["href"]);
+    } catch {
+      return "";
+    }
+  })();
   const isOutlink = link.startsWith("https://");
   const isInternalLink = link.startsWith("/w/");
   const isImageLink = link.startsWith("/jump/");
