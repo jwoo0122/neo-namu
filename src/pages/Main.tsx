@@ -67,7 +67,10 @@ const styles = StyleSheet.create({
     minHeight: "100%",
   },
   hiddenNamu: {
+    position: "absolute",
+    top: 0,
     width: "100%",
     height: 0,
+    zIndex: 1,
   },
 });

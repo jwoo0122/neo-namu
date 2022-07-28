@@ -32,23 +32,29 @@ const NEO_NAMU_BRIDGE = `
 
     
     window.addEventListener("message", (event) => {
-      const { keyword, type } = JSON.parse(event.data);
-      const inputEl = document.getElementsByTagName("input")[0];
-      const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
-      
-      if (type === 'neo-namu-type') {
-        inputEl.value = keyword;
-        inputEl.dispatchEvent(new Event('input'));
+      try {
+        if (event.data && event.data.includes?.('"type": "neo-namu-')) {
+          const { keyword, type } = JSON.parse(event.data);
+          const inputEl = document.getElementsByTagName("input")[0];
+          const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
+          
+          if (type === 'neo-namu-type') {
+            inputEl.value = keyword;
+            inputEl.dispatchEvent(new Event('input'));
+          }
+          
+          if (type === 'neo-namu-search') {
+            searchButtonEl.dispatchEvent(new Event('click'));
+          }
+    
+          if (type === 'neo-namu-done') {
+            const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
+            RN.postMessage('html-result:' + resultValue);
+          };
+        }
+      } catch(err) {
+        alert(err + "\\n" + event.data)
       }
-      
-      if (type === 'neo-namu-search') {
-        searchButtonEl.dispatchEvent(new Event('click'));
-      }
-
-      if (type === 'neo-namu-done') {
-        const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
-        RN.postMessage('html-result:' + resultValue);
-      };
     });
   };
 })()
@@ -56,7 +62,7 @@ const NEO_NAMU_BRIDGE = `
 
 export function NamuWiki() {
   const [keyword] = useKeyword();
-  const [isLoading, setIsLoading] = useIsLoading();
+  const [isLoading] = useIsLoading();
   const [, setHistory] = useHistory();
   const [, setResult] = useResult();
   const [, setSuggestion] = useSuggestion();
@@ -65,7 +71,6 @@ export function NamuWiki() {
 
   const handleMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
     if (data.startsWith("html-result")) {
-      setIsLoading(false);
       setResult(data.replace(/^html-result:/g, ""));
     } else if (data.startsWith("suggestion-result")) {
       setSuggestion(
@@ -78,8 +83,9 @@ export function NamuWiki() {
     }
   };
 
-  const handleLoadDone = () =>
+  const handleLoadDone = () => {
     namuWikiRef.current.postMessage(`{ "type": "neo-namu-done" }`);
+  };
 
   useEffect(() => {
     namuWikiRef.current?.postMessage(
