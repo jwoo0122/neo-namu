@@ -11,16 +11,16 @@ export function Image({ tnode }: ImageProps) {
 
   const aspectRatio = width / height;
 
-  if (!src.startsWith("https")) {
-    return null;
-  }
-
   useEffect(() => {
     RNImage.getSize(src, (_width, _height) => {
       setWidth(_width);
       setHeight(_height);
     });
   }, []);
+
+  if (!src.startsWith("https")) {
+    return null;
+  }
 
   if (width === 0 || height === 0) {
     return null;

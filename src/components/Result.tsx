@@ -1,4 +1,4 @@
-import { getElementsByTagName, removeElement } from "domutils";
+import { filter, getElementsByTagName, removeElement } from "domutils";
 import React, { useEffect, useMemo } from "react";
 import { ActivityIndicator, useWindowDimensions, View } from "react-native";
 import {
@@ -6,9 +6,11 @@ import {
   RenderHTMLSource,
   TRenderEngineProvider,
   useAmbientTRenderEngine,
+  Element,
 } from "react-native-render-html";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Anchor } from "../elements/Anchor";
+import { AsideToC } from "../elements/AsideToC";
 import { BlockQuote } from "../elements/BlockQuote";
 import { Heading1 } from "../elements/Heading1";
 import { Heading2 } from "../elements/Heading2";
@@ -30,6 +32,7 @@ const renderers = {
   blockquote: BlockQuote,
   td: Td,
   img: Image,
+  aside: AsideToC,
 };
 
 interface NeoNamuRenderHTMLProps {
@@ -43,8 +46,14 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
   const dimension = useWindowDimensions();
 
   useEffect(() => {
-    // @ts-ignore
-    getElementsByTagName("a", dom, true).forEach((anchor) => {
+    (
+      filter(
+        (elem) => (elem as Element).attribs?.["src"] != null,
+        // @ts-ignore
+        dom,
+        true
+      ) as Array<Element>
+    ).forEach((anchor) => {
       if (anchor.attribs["src"]) {
         const originalSrc = anchor.attribs["src"];
 
@@ -72,6 +81,12 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
     const footer = getElementsByTagName("footer", dom, true)[0];
     if (footer) {
       removeElement(footer);
+    }
+
+    // @ts-ignore
+    const h1 = getElementsByTagName("h1", dom, true)[0];
+    if (h1 && h1.next.next) {
+      removeElement(h1.next.next);
     }
 
     setIsLoading(false);

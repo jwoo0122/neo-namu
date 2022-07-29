@@ -48,6 +48,16 @@ const NEO_NAMU_BRIDGE = `
           }
     
           if (type === 'neo-namu-done') {
+            const contentNode = Array.from(document.getElementsByTagName('div')).find((elm) => {
+              return window.getComputedStyle(elm, ':before')['content'] === '"목차"'
+            });
+            
+            if (contentNode) {
+              const asideContent = document.createElement('aside')
+              asideContent.innerHTML = contentNode.innerHTML
+              contentNode.parentNode.replaceChild(asideContent, contentNode)
+            }
+
             const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
             RN.postMessage('html-result:' + resultValue);
           };
