@@ -74,19 +74,35 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
     const parent = h2s[1]?.parent;
 
     if (parent) {
+      /**
+       * Remove advertisements
+       */
       removeElement(parent.childNodes[parent.childNodes.length - 2]);
     }
 
     // @ts-ignore
     const footer = getElementsByTagName("footer", dom, true)[0];
     if (footer) {
+      /**
+       * Remove disclaimer
+       */
       removeElement(footer);
     }
 
     // @ts-ignore
     const h1 = getElementsByTagName("h1", dom, true)[0];
-    if (h1 && h1.next.next) {
-      removeElement(h1.next.next);
+
+    const h1Index = h1?.parent?.children.findIndex((node) => node === h1);
+
+    if (h1 && h1.parent && h1.parent.children && h1Index) {
+      /**
+       * Remove edit row
+       */
+      removeElement(h1.parent.children[h1Index - 2]);
+      /**
+       * Remove recent edit timestamp
+       */
+      removeElement(h1.parent.children[h1Index + 2]);
     }
 
     setIsLoading(false);
@@ -100,7 +116,7 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
 }
 
 const ignoredDomTags = ["noscript", "iframe", "video", "math", "svg"];
-const ignoredStyles = ["width"];
+const ignoredStyles = ["width", "position"];
 
 function Result() {
   const [result] = useResult();
@@ -126,7 +142,7 @@ function Result() {
         display: "flex",
         flexDirection: "row",
         marginHorizontal: 15,
-        paddingTop: top,
+        paddingTop: top + 50,
         paddingBottom: bottom + 510,
         backgroundColor: background,
       }}
