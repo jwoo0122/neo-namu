@@ -1,19 +1,24 @@
+import { getInnerHTML } from "domutils";
 import { StyleSheet, Text, View } from "react-native";
-import { CustomRendererProps, TText } from "react-native-render-html";
+import {
+  CustomRendererProps,
+  TChildrenRenderer,
+  TText,
+} from "react-native-render-html";
+import { THEME_ORIGINAL } from "../constants/color";
+import { useColor } from "../hooks/useColor";
 
 interface AsideToCProps extends CustomRendererProps<TText> {}
 
 export function AsideToC({ TDefaultRenderer, tnode }: AsideToCProps) {
-  console.log(tnode.children[0].children[0].children.length);
+  const { color } = useColor();
 
   return (
-    <View style={styles.wrapper}>
-      {tnode.children[0].children.map((node, index) => (
-        <View key={index}>
-          <Text>hi</Text>
-        </View>
+    <View style={[styles.wrapper, { backgroundColor: THEME_ORIGINAL }]}>
+      <Text style={styles.tocTitle}>목차</Text>
+      {tnode.children[0].children.map((node) => (
+        <Text style={styles.tocItem}>{node.tagName}</Text>
       ))}
-      {/* <TChildrenRenderer tchildren={tnode.children[0].children} /> */}
     </View>
   );
 }
@@ -22,6 +27,17 @@ const styles = StyleSheet.create({
   wrapper: {
     display: "flex",
     flexDirection: "column",
-    borderWidth: 1,
+    borderRadius: 5,
+    padding: 15,
+  },
+  tocTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 10,
+  },
+  tocItem: {
+    fontSize: 18,
+    color: "white",
   },
 });

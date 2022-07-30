@@ -1,28 +1,14 @@
 import { Text, View } from "react-native";
-import {
-  CustomRendererProps,
-  isDomElement,
-  isDomText,
-  TBlock,
-} from "react-native-render-html";
+import { CustomRendererProps, TBlock } from "react-native-render-html";
 import { useColor } from "../hooks/useColor";
+import { useGetTitle } from "../hooks/useGetTitle";
 
 interface Heading3Props extends CustomRendererProps<TBlock> {}
 
-export function Heading3({ TDefaultRenderer, tnode, ...props }: Heading3Props) {
+export function Heading3({ tnode }: Heading3Props) {
   const { color } = useColor();
 
-  // @ts-ignore
-  const title = (() => {
-    const targetNode = tnode.domNode.childNodes[2];
-    if (isDomElement(targetNode)) {
-      const targetSpan = targetNode.children[0];
-      if (isDomText(targetSpan)) {
-        return targetSpan.data;
-      }
-    }
-    return "";
-  })();
+  const getTitle = useGetTitle();
 
   return (
     <View
@@ -38,7 +24,7 @@ export function Heading3({ TDefaultRenderer, tnode, ...props }: Heading3Props) {
           color,
         }}
       >
-        {title}
+        {getTitle(tnode)}
       </Text>
     </View>
   );

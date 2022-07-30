@@ -7,10 +7,12 @@ import {
 } from "expo-web-browser";
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "../hooks/useNavigation";
+import { useColor } from "../hooks/useColor";
 
 interface AnchorProps extends CustomRendererProps<TText> {}
 
 export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
+  const { color } = useColor();
   const { goRecent } = useNavigation();
   const search = useSearch();
 
@@ -33,7 +35,17 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   };
 
   if (!isOutlink && !isInternalLink && !isImageLink) {
-    return null;
+    return (
+      <TDefaultRenderer
+        onPress={() => {}}
+        tnode={tnode}
+        {...props}
+        style={{
+          textDecorationLine: "none",
+          color,
+        }}
+      />
+    );
   }
 
   return (

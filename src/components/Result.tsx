@@ -99,29 +99,40 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
   );
 }
 
+const ignoredDomTags = ["noscript", "iframe", "video", "math", "svg"];
+
 function Result() {
   const [result] = useResult();
   const { background, color } = useColor();
+  const { width } = useWindowDimensions();
 
   const { top, bottom } = useSafeAreaInsets();
+
+  const baseStyle = useMemo(
+    () => ({
+      width: "100%",
+      fontSize: 18,
+      lineHeight: 27,
+      color,
+    }),
+    [color]
+  );
 
   return (
     <View
       style={{
-        width: "100%",
-        paddingHorizontal: 15,
+        width: width - 30,
+        display: "flex",
+        flexDirection: "row",
+        marginHorizontal: 15,
         paddingTop: top,
-        paddingBottom: bottom + 50,
+        paddingBottom: bottom + 510,
         backgroundColor: background,
       }}
     >
       <TRenderEngineProvider
-        baseStyle={{
-          fontSize: 18,
-          lineHeight: 27,
-          color,
-        }}
-        ignoredDomTags={["noscript", "iframe", "video"]}
+        baseStyle={baseStyle}
+        ignoredDomTags={ignoredDomTags}
       >
         <RenderHTMLConfigProvider renderers={renderers}>
           <NeoNamuRenderHTML html={result} />

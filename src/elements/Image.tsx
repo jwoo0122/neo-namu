@@ -27,17 +27,15 @@ export function Image({ tnode }: ImageProps) {
   }
 
   return (
-    <>
-      <RNImage
-        source={{
-          uri: src,
-        }}
-        style={{
-          width: "100%",
-          height: undefined,
-          aspectRatio: aspectRatio,
-        }}
-      />
-    </>
+    <RNImage
+      source={{
+        uri: src,
+      }}
+      style={{
+        width: "100%",
+        height: undefined,
+        aspectRatio: aspectRatio,
+      }}
+    />
   );
 }
