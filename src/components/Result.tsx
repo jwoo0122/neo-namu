@@ -100,6 +100,7 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
 }
 
 const ignoredDomTags = ["noscript", "iframe", "video", "math", "svg"];
+const ignoredStyles = ["width"];
 
 function Result() {
   const [result] = useResult();
@@ -133,6 +134,8 @@ function Result() {
       <TRenderEngineProvider
         baseStyle={baseStyle}
         ignoredDomTags={ignoredDomTags}
+        // @ts-ignore
+        ignoredStyles={ignoredStyles}
       >
         <RenderHTMLConfigProvider renderers={renderers}>
           <NeoNamuRenderHTML html={result} />

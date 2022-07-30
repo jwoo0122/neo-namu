@@ -20,6 +20,9 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
   const isOutlink = link.startsWith("https://");
   const isInternalLink = link.startsWith("/w/");
   const isImageLink = link.startsWith("/jump/");
+  const isGoogleAdSense = link.startsWith(
+    "https://googleads.g.doubleclick.net/"
+  );
 
   const handleClick = () => {
     if (isOutlink) {
@@ -33,6 +36,10 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
       alert("Not supported link");
     }
   };
+
+  if (isGoogleAdSense) {
+    return null;
+  }
 
   if (!isOutlink && !isInternalLink && !isImageLink) {
     return (
