@@ -1,12 +1,10 @@
-import { QueryClient, QueryClientProvider } from "react-query";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import Main from "./src/pages/Main";
-
-const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <SafeAreaProvider>
       <Main />
-    </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
