@@ -105,6 +105,23 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
       removeElement(h1.parent.children[h1Index + 2]);
     }
 
+    const withHardWidth = filter(
+      (elem) =>
+        (elem as Element).attribs?.["style"]?.includes("width") ||
+        (elem as Element).attribs?.["width"] != null,
+      // @ts-ignore
+      dom,
+      true
+    );
+    withHardWidth.forEach((elm) => {
+      const originalStyle = (elm as Element).attribs["style"];
+
+      if (originalStyle) {
+        const styleWithMaxWidth = originalStyle + " max-width: 100%;";
+        (elm as Element).attribs["style"] = styleWithMaxWidth;
+      }
+    });
+
     setIsLoading(false);
   }, [dom]);
 
@@ -116,7 +133,7 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
 }
 
 const ignoredDomTags = ["noscript", "iframe", "video", "math", "svg"];
-const ignoredStyles = ["width", "position"];
+const ignoredStyles = ["position"];
 
 function Result() {
   const [result] = useResult();
@@ -127,7 +144,7 @@ function Result() {
 
   const baseStyle = useMemo(
     () => ({
-      width: "100%",
+      maxWidth: "100%",
       fontSize: 18,
       lineHeight: 27,
       color,
