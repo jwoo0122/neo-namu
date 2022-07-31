@@ -32,23 +32,39 @@ const NEO_NAMU_BRIDGE = `
 
     
     window.addEventListener("message", (event) => {
-      const { keyword, type } = JSON.parse(event.data);
-      const inputEl = document.getElementsByTagName("input")[0];
-      const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
-      
-      if (type === 'neo-namu-type') {
-        inputEl.value = keyword;
-        inputEl.dispatchEvent(new Event('input'));
-      }
-      
-      if (type === 'neo-namu-search') {
-        searchButtonEl.dispatchEvent(new Event('click'));
-      }
+      try {
+        if (event.data && event.data.includes?.('"type": "neo-namu-')) {
+          const { keyword, type } = JSON.parse(event.data);
+          const inputEl = document.getElementsByTagName("input")[0];
+          const searchButtonEl = inputEl.parentNode.nextElementSibling.children[1];
+          
+          if (type === 'neo-namu-type') {
+            inputEl.value = keyword;
+            inputEl.dispatchEvent(new Event('input'));
+          }
+          
+          if (type === 'neo-namu-search') {
+            searchButtonEl.dispatchEvent(new Event('click'));
+          }
+    
+          if (type === 'neo-namu-done') {
+            const contentNode = Array.from(document.getElementsByTagName('div')).find((elm) => {
+              return window.getComputedStyle(elm, ':before')['content'] === '"목차"'
+            });
+            
+            if (contentNode) {
+              const asideContent = document.createElement('aside')
+              asideContent.innerHTML = contentNode.innerHTML
+              contentNode.parentNode.replaceChild(asideContent, contentNode)
+            }
 
-      if (type === 'neo-namu-done') {
-        const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
-        RN.postMessage('html-result:' + resultValue);
-      };
+            const resultValue = document.getElementsByTagName('h1')[0].parentNode.innerHTML
+            RN.postMessage('html-result:' + resultValue);
+          };
+        }
+      } catch(err) {
+        alert(err + "\\n" + event.data)
+      }
     });
   };
 })()
@@ -56,7 +72,7 @@ const NEO_NAMU_BRIDGE = `
 
 export function NamuWiki() {
   const [keyword] = useKeyword();
-  const [isLoading, setIsLoading] = useIsLoading();
+  const [isLoading] = useIsLoading();
   const [, setHistory] = useHistory();
   const [, setResult] = useResult();
   const [, setSuggestion] = useSuggestion();
@@ -65,7 +81,6 @@ export function NamuWiki() {
 
   const handleMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {
     if (data.startsWith("html-result")) {
-      setIsLoading(false);
       setResult(data.replace(/^html-result:/g, ""));
     } else if (data.startsWith("suggestion-result")) {
       setSuggestion(
@@ -78,8 +93,9 @@ export function NamuWiki() {
     }
   };
 
-  const handleLoadDone = () =>
+  const handleLoadDone = () => {
     namuWikiRef.current.postMessage(`{ "type": "neo-namu-done" }`);
+  };
 
   useEffect(() => {
     namuWikiRef.current?.postMessage(

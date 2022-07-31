@@ -1,4 +1,10 @@
-import { View, ScrollView, Animated, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import { NamuWiki } from "../components/NamuWiki";
 import Result from "../components/Result";
 import SearchBar, { SearchBarHandler } from "../components/SearchBar";
@@ -10,6 +16,7 @@ import { StatusBar } from "../components/StatusBar";
 
 function Main() {
   const searchBarRef = useRef<SearchBarHandler | null>(null);
+  const { width } = useWindowDimensions();
 
   const scrollRef = useRef<ScrollView | null>(null);
   const { background } = useColor();
@@ -22,7 +29,7 @@ function Main() {
   } = useSearchBarPosition(scrollRef.current);
 
   return (
-    <View style={{ backgroundColor: background }}>
+    <View style={{ backgroundColor: background, width }}>
       <StatusBar />
 
       <View style={styles.hiddenNamu}>
@@ -64,10 +71,14 @@ export default React.memo(Main);
 
 const styles = StyleSheet.create({
   result: {
+    width: "100%",
     minHeight: "100%",
   },
   hiddenNamu: {
+    position: "absolute",
+    top: 0,
     width: "100%",
     height: 0,
+    zIndex: 1,
   },
 });

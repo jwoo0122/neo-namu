@@ -9,13 +9,8 @@ export function Td({ TDefaultRenderer, tnode, ...props }: TdProps) {
       {...props}
       style={{
         ...props.style,
-        paddingTop: 8,
-        paddingRight: 8,
-        paddingBottom: 8,
-        paddingLeft: 8,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        width: "100%",
+        padding: 5,
       }}
     />
   );

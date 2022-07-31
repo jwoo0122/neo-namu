@@ -15,8 +15,10 @@ import { useHistory } from "../hooks/useHistory";
 import { useNavigation } from "../hooks/useNavigation";
 import { useNavigator } from "../hooks/useNavigator";
 import { useIsDarkmode } from "../hooks/useIsDarkmode";
+import { useIsLoading } from "../hooks/useSearch";
 
 export function SearchBarBackground() {
+  const [isLoading] = useIsLoading();
   const isDarkmode = useIsDarkmode();
   const backgroundColor = !isDarkmode ? "rgb(40, 40, 40)" : "rgb(0, 0, 0)";
   const [history] = useHistory();
@@ -34,10 +36,24 @@ export function SearchBarBackground() {
     return false;
   }, [navigatorGesture]);
 
-  const indicateText = (() => {
+  const canGoBackRef = useRef(canGoBack);
+  const canGoForwardRef = useRef(canGoForward);
+  const historyRef = useRef(history);
+  const navigatorRef = useRef(navigator);
+
+  useEffect(() => {
+    if (!isLoading) {
+      canGoBackRef.current = canGoBack;
+      canGoForwardRef.current = canGoForward;
+      historyRef.current = history;
+      navigatorRef.current = navigator;
+    }
+  }, [isLoading, canGoBack, canGoForward, history, navigator]);
+
+  const indicateText = useMemo(() => {
     switch (navigatorGesture) {
       case "back": {
-        if (!canGoBack) {
+        if (!canGoBackRef.current) {
           return [
             "",
             <AntDesign name="close" size={50} color="white" />,
@@ -45,12 +61,12 @@ export function SearchBarBackground() {
         }
 
         return [
-          `이전 문서: ${history[navigator + 1]}`,
+          historyRef.current[navigatorRef.current + 1],
           <AntDesign name="arrowleft" size={50} color="white" />,
         ] as const;
       }
       case "forward": {
-        if (!canGoForward) {
+        if (!canGoForwardRef.current) {
           return [
             "",
             <AntDesign name="close" size={50} color="white" />,
@@ -58,7 +74,7 @@ export function SearchBarBackground() {
         }
 
         return [
-          `다음 문서: ${history[navigator - 1]}`,
+          historyRef.current[navigatorRef.current - 1],
           <AntDesign name="arrowright" size={50} color="white" />,
         ] as const;
       }
@@ -71,7 +87,7 @@ export function SearchBarBackground() {
       default:
         return ["", null];
     }
-  })();
+  }, [navigatorGesture]);
 
   const opacity = useRef(new Animated.Value(0)).current;
 
