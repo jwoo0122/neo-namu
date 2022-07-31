@@ -1,3 +1,4 @@
+import { iframeModel } from "@native-html/iframe-plugin";
 import { filter, getElementsByTagName, removeElement } from "domutils";
 import React, { useEffect, useMemo } from "react";
 import { ActivityIndicator, useWindowDimensions, View } from "react-native";
@@ -19,6 +20,7 @@ import { Heading4 } from "../elements/Heading4";
 import { Image } from "../elements/Image";
 import { Table } from "../elements/Table";
 import { Td } from "../elements/Td";
+import { Youtube } from "../elements/Youtube";
 import { useColor } from "../hooks/useColor";
 import { useIsLoading, useResult } from "../hooks/useSearch";
 
@@ -33,6 +35,7 @@ const renderers = {
   td: Td,
   img: Image,
   aside: AsideToC,
+  iframe: Youtube,
 };
 
 interface NeoNamuRenderHTMLProps {
@@ -132,8 +135,11 @@ function NeoNamuRenderHTML({ html }: NeoNamuRenderHTMLProps) {
   );
 }
 
-const ignoredDomTags = ["noscript", "iframe", "video", "math", "svg"];
+const ignoredDomTags = ["noscript", "video", "math", "svg"];
 const ignoredStyles = ["position"];
+const customHTMLElementModels = {
+  iframe: iframeModel,
+};
 
 function Result() {
   const [result] = useResult();
@@ -166,6 +172,7 @@ function Result() {
     >
       <TRenderEngineProvider
         baseStyle={baseStyle}
+        customHTMLElementModels={customHTMLElementModels}
         ignoredDomTags={ignoredDomTags}
         // @ts-ignore
         ignoredStyles={ignoredStyles}
