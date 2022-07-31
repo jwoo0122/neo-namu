@@ -8,6 +8,7 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "../hooks/useNavigation";
 import { useColor } from "../hooks/useColor";
+import { View } from "react-native";
 
 interface AnchorProps extends CustomRendererProps<TText> {}
 
@@ -52,6 +53,22 @@ export function Anchor({ TDefaultRenderer, tnode, ...props }: AnchorProps) {
           color,
         }}
       />
+    );
+  }
+
+  if (isImageLink) {
+    return (
+      <View style={{ width: "100%" }}>
+        <TDefaultRenderer
+          onPress={() => {}}
+          tnode={tnode}
+          {...props}
+          style={{
+            textDecorationLine: "none",
+            color,
+          }}
+        />
+      </View>
     );
   }
 
