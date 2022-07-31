@@ -45,7 +45,7 @@ export function SearchBarBackground() {
         }
 
         return [
-          `이전 문서: ${history[navigator + 1]}`,
+          history[navigator + 1],
           <AntDesign name="arrowleft" size={50} color="white" />,
         ] as const;
       }
@@ -58,7 +58,7 @@ export function SearchBarBackground() {
         }
 
         return [
-          `다음 문서: ${history[navigator - 1]}`,
+          history[navigator - 1],
           <AntDesign name="arrowright" size={50} color="white" />,
         ] as const;
       }

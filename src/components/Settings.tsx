@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
+import { SEARCHBAR_EASING } from "../constants/animated";
 import { SEARCH_BAR_BOTTOM } from "../constants/position";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { backgroundShadow } from "../styles/background";
@@ -40,7 +40,8 @@ export function Settings() {
     Animated.timing(top, {
       toValue: isBottomSheetOpened ? SETTING_Y_OFFSET_ON_VISIBLE : topWhenHide,
       useNativeDriver: true,
-      duration: SEARCHBAR_TRANSITION_DURATION,
+      duration: 200,
+      easing: SEARCHBAR_EASING,
     }).start();
   }, [isBottomSheetOpened]);
 

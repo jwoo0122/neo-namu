@@ -31,7 +31,10 @@ import { THEME_LIGHT, THEME_ORIGINAL } from "../constants/color";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsBottomSheetOpened } from "../hooks/useIsBottomSheetOpened";
 import { ZIndex } from "../constants/zIndex";
-import { SEARCHBAR_TRANSITION_DURATION } from "../constants/animated";
+import {
+  SEARCHBAR_EASING,
+  SEARCHBAR_TRANSITION_DURATION,
+} from "../constants/animated";
 import { Settings } from "./Settings";
 import { SEARCH_BAR_BOTTOM } from "../constants/position";
 import { backgroundShadow } from "../styles/background";
@@ -59,6 +62,12 @@ function SearchBar(
     new Animated.ValueXY({ x: 0, y: 0 })
   ).current;
 
+  const rotateChevronAnimated = useRef(new Animated.Value(0)).current;
+  const rotateChevron = rotateChevronAnimated.interpolate({
+    inputRange: [-1, 2],
+    outputRange: ["-90deg", "180deg"],
+  });
+
   const [navigatorGesture, setNavigatorGesture] = useNavigatorGesture();
   const { goBack, goForward, goRecent } = useNavigation();
   const navigatorGestureValue = useRef(navigatorGesture);
@@ -79,8 +88,6 @@ function SearchBar(
   const isDark = colorScheme === "dark";
   const colorForIcon = isDark ? "white" : "#3F3F3F";
   const colorForButtons = isDark ? "#5A5A5A" : "#DFDFDF";
-
-  const colorForJoystick = isDark ? "white" : "#303030";
 
   const { transparent } = useColor();
 
@@ -114,6 +121,7 @@ function SearchBar(
       toValue: -20,
       useNativeDriver: true,
       duration: SEARCHBAR_TRANSITION_DURATION,
+      easing: SEARCHBAR_EASING,
     }).start();
   };
 
@@ -122,6 +130,39 @@ function SearchBar(
       toValue: -500,
       useNativeDriver: true,
       duration: SEARCHBAR_TRANSITION_DURATION,
+      easing: SEARCHBAR_EASING,
+    }).start();
+  };
+
+  const chevronUp = () => {
+    Animated.timing(rotateChevronAnimated, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const chevronDown = () => {
+    Animated.timing(rotateChevronAnimated, {
+      toValue: 2,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const chevronBack = () => {
+    Animated.timing(rotateChevronAnimated, {
+      toValue: -1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const chevronForward = () => {
+    Animated.timing(rotateChevronAnimated, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -167,6 +208,7 @@ function SearchBar(
           toValue: { x: 0, y: 0 },
           useNativeDriver: true,
           duration: SEARCHBAR_TRANSITION_DURATION,
+          easing: SEARCHBAR_EASING,
         }).start();
 
         joystickTranslation.flattenOffset();
@@ -179,8 +221,10 @@ function SearchBar(
 
     if (isBottomSheetOpened) {
       goUp();
+      chevronDown();
     } else {
       goDown();
+      chevronUp();
     }
   }, [isBottomSheetOpened]);
 
@@ -204,6 +248,16 @@ function SearchBar(
 
   useEffect(() => {
     navigatorGestureValue.current = navigatorGesture;
+
+    if (!isBottomSheetOpenedValue.current) {
+      if (navigatorGesture === "back") {
+        chevronBack();
+      } else if (navigatorGesture === "forward") {
+        chevronForward();
+      } else {
+        chevronUp();
+      }
+    }
   }, [navigatorGesture]);
 
   useEffect(() => {
@@ -272,15 +326,29 @@ function SearchBar(
                 style={[
                   styles.joystick,
                   {
-                    backgroundColor: transparent,
-                    borderColor: colorForJoystick,
                     transform: [
                       { translateX: joystickTranslation.x },
                       { translateY: joystickTranslation.y },
                     ],
                   },
                 ]}
-              />
+              >
+                <LinearGradient
+                  start={{ x: 0.5, y: 1 }}
+                  end={{ x: 0.5, y: 0 }}
+                  colors={[THEME_ORIGINAL, "#37d48a"]}
+                  style={styles.joystickHandle}
+                >
+                  <Animated.View
+                    style={[
+                      styles.joystickChevron,
+                      { transform: [{ rotate: rotateChevron }] },
+                    ]}
+                  >
+                    <Feather name="chevron-up" size={24} color="white" />
+                  </Animated.View>
+                </LinearGradient>
+              </Animated.View>
             </View>
 
             <LinearGradient
@@ -399,14 +467,30 @@ const styles = StyleSheet.create({
     position: "absolute",
     display: "flex",
     alignItems: "center",
-    top: -36,
+    top: -48,
     zIndex: ZIndex.SEARCHBAR_JOYSTICK,
   },
   joystick: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 4,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    overflow: "hidden",
+  },
+  joystickHandle: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  joystickChevron: {
+    width: "100%",
+    height: "100%",
+    paddingLeft: 1,
+    paddingBottom: 2,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   wrapper: {
     width: "100%",
