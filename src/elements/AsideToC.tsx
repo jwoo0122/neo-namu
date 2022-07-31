@@ -1,8 +1,7 @@
-import { getInnerHTML } from "domutils";
 import { StyleSheet, Text, View } from "react-native";
 import {
   CustomRendererProps,
-  TChildrenRenderer,
+  TNodeChildrenRenderer,
   TText,
 } from "react-native-render-html";
 import { THEME_ORIGINAL } from "../constants/color";
@@ -10,15 +9,16 @@ import { useColor } from "../hooks/useColor";
 
 interface AsideToCProps extends CustomRendererProps<TText> {}
 
-export function AsideToC({ TDefaultRenderer, tnode }: AsideToCProps) {
+export function AsideToC({ tnode }: AsideToCProps) {
   const { color } = useColor();
 
   return (
     <View style={[styles.wrapper, { backgroundColor: THEME_ORIGINAL }]}>
       <Text style={styles.tocTitle}>목차</Text>
-      {tnode.children[0].children.map((node) => (
-        <Text style={styles.tocItem}>{node.tagName}</Text>
-      ))}
+      <TNodeChildrenRenderer
+        tnode={tnode}
+        propsForChildren={{ style: { color } }}
+      />
     </View>
   );
 }
